@@ -2,14 +2,15 @@
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.4.0
+Stable tag: 1.5.0
 License: GPLv2 or later
 
 A lightweight, modern skin for the WordPress admin and login page. Styling only.
 
 == What it does ==
 
-* White content area, near-white sidebar and toolbar, hairline cards and tables, one accent colour.
+* One soft canvas shared by the page, sidebar and toolbar, with white kept for cards, tables and fields so content stands out. One accent colour.
+* Layered dashboard widgets and plugin cards, settings screens laid out as cards, faint shadows on raised surfaces.
 * Compact sidebar with a soft accent-tinted pill on the open section and chevrons on sections that have sub-items.
 * Colour with meaning: tinted pills for Draft, Pending, Scheduled and Private, status dots for inactive or outdated plugins, amber update counts, soft chips for categories and tags.
 * Page titles with a full-width divider, and status filters shown as a segmented control.
@@ -53,6 +54,14 @@ Anything saved on the settings screen overrides these defaults for that site.
 * Design tokens follow the neutral, card-based language of Cloudflare's open source Kumo design system (MIT licensed). No third-party logos, fonts or assets are included.
 
 == Changelog ==
+
+= 1.5.0 =
+* Changed: the page, sidebar and toolbar now share one canvas colour (#fbfbfb, with a matching dark tone). White is reserved for cards, tables and fields.
+* Added: three elevation levels. Flat surfaces have a hairline, raised ones (cards, tables, buttons) add a faint shadow, menus and dialogs keep the larger one.
+* Added: layered dashboard widgets. The title sits on a recessed layer and the body is a white raised panel inside it.
+* Added: the same layering on Add Plugins cards, with the ratings strip on the recessed layer.
+* Added: settings as cards on WordPress's own settings and profile screens.
+* Build: release zips now ship minified stylesheets. The repository keeps the readable source.
 
 = 1.4.0 =
 * Added: media skin in its own stylesheet (assets/media.css), loaded only where WordPress loads its media views.

@@ -10,7 +10,8 @@ Most admin themes ship settings panels, icon packs and JavaScript frameworks. Th
 
 ## What you get
 
-- **Clean surfaces.** Light neutral page, hairline cards and tables, one accent colour.
+- **Clean surfaces.** One soft canvas for the page, sidebar and toolbar. White is kept for cards, tables and fields, so content stands out. Faint shadows on raised surfaces.
+- **Layered cards.** Dashboard widgets and plugin cards sit on a recessed layer with a white panel inside. Core settings screens are laid out as cards.
 - **Sidebar.** Compact rows, a soft accent tint on the open section, chevrons on sections with sub-items, even spacing in fly-out menus.
 - **Colour with meaning.** Tinted pills for Draft, Pending, Scheduled and Private. Dots for inactive or outdated plugins. Amber update counts. Published content and active plugins stay plain, so long lists stay calm.
 - **List tables.** Status filters as a segmented control, categories and tags as soft chips.
@@ -24,6 +25,10 @@ Most admin themes ship settings panels, icon packs and JavaScript frameworks. Th
 | Media Library | Attachment details |
 | --- | --- |
 | ![Media Library grid](.github/screenshots/media-library.png) | ![Attachment details dialog](.github/screenshots/attachment-details.png) |
+
+| Dashboard | Settings |
+| --- | --- |
+| ![Dashboard with layered widgets](.github/screenshots/dashboard.png) | ![General settings laid out as a card](.github/screenshots/settings.png) |
 
 | Plugins | Dark mode |
 | --- | --- |
@@ -87,6 +92,7 @@ assets/admin.css    Admin skin
 assets/media.css    Media skin, loaded only on media screens
 assets/login.css    Login screens
 assets/admin.js     Appearance toggle in the toolbar
+.github/            Release workflow and the CSS minifier it uses (not shipped)
 readme.txt          WordPress-format readme and changelog
 ```
 

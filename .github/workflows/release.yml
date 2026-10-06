@@ -64,7 +64,11 @@ jobs:
       - name: Build slate-admin.zip
         if: env.EXISTS == 'no' || github.ref_type == 'tag'
         run: |
-          git archive --format=zip --prefix=slate-admin/ -o slate-admin.zip "$GITHUB_SHA"
+          mkdir build
+          git archive --format=tar --prefix=slate-admin/ "$GITHUB_SHA" | tar -x -C build
+          # The repository keeps readable CSS; the shipped zip gets it minified.
+          python3 .github/scripts/minify_css.py build/slate-admin/assets/*.css
+          (cd build && zip -qr ../slate-admin.zip slate-admin)
           unzip -l slate-admin.zip
 
       - name: Pull this version's notes from readme.txt

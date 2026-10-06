@@ -30,9 +30,12 @@
 	--sa-link: light-dark(var(--sa-link-l, color-mix(in oklab, var(--sa-accent), #000 22%)), var(--sa-link-d, color-mix(in oklab, var(--sa-accent), #fff 48%)));
 	--sa-nav-active: light-dark(color-mix(in oklab, var(--sa-accent) 10%, transparent), color-mix(in oklab, var(--sa-accent) 26%, transparent));
 
-	--sa-canvas: light-dark(#fff, #0a0a0a);
-	--sa-side: light-dark(#fcfcfc, #0e0e0e);
-	--sa-chrome: light-dark(#fafafa, #131313);
+	/* Surfaces. The page, sidebar and toolbar share one canvas; white is kept
+	   for things that hold content, so cards and tables stand out on it. */
+	--sa-canvas: light-dark(#fbfbfb, #0c0c0c);
+	--sa-side: light-dark(#fbfbfb, #0c0c0c);
+	--sa-chrome: light-dark(#f7f7f7, #131313);
+	--sa-layer: light-dark(#f4f4f4, #101010);
 	--sa-base: light-dark(#fff, #171717);
 	--sa-control: light-dark(#fff, #1c1c1c);
 	--sa-tint: light-dark(#f2f2f2, #262626);
@@ -72,6 +75,9 @@
 	--sa-gutter-end: 28px;
 	--sa-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif;
 	--sa-focus: 0 0 0 2px var(--sa-base), 0 0 0 4px var(--sa-accent);
+	/* Elevation: flat is a hairline only, raised adds --sa-shadow-sm, overlays
+	   (menus, dialogs) use --sa-pop. */
+	--sa-shadow-sm: 0 1px 2px light-dark(rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.5));
 	--sa-pop: 0 0 0 1px var(--sa-line), 0 8px 24px -6px rgba(0, 0, 0, 0.18);
 }
 
@@ -703,7 +709,7 @@ body.sa-ui { font-size: 14px; }
 	background: var(--sa-control);
 	border: 1px solid var(--sa-border);
 	border-radius: var(--sa-radius);
-	box-shadow: none;
+	box-shadow: var(--sa-shadow-sm);
 	text-shadow: none;
 }
 
@@ -767,6 +773,7 @@ body.sa-ui { font-size: 14px; }
 	color: var(--sa-on-accent);
 	background: var(--sa-accent);
 	border-color: transparent;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.14);
 }
 
 .sa-ui.wp-core-ui .button-primary:hover,
@@ -953,6 +960,27 @@ body.sa-ui { font-size: 14px; }
 
 .sa-ui .form-table fieldset label { font-weight: 400; }
 
+/* Settings as cards, on WordPress's own settings and profile screens. Plugin
+   settings pages often nest these tables in their own boxes, so they are
+   left alone. */
+.sa-ui:is(.options-general-php, .options-writing-php, .options-reading-php, .options-discussion-php, .options-media-php, .options-permalink-php, .profile-php, .user-edit-php, .user-new-php, .settings_page_slate-admin) .wrap .form-table {
+	margin: 12px 0 24px;
+	background: var(--sa-base);
+	border: 1px solid var(--sa-line);
+	border-radius: var(--sa-radius-lg);
+	border-collapse: separate;
+	border-spacing: 0;
+	box-shadow: var(--sa-shadow-sm);
+}
+
+.sa-ui:is(.options-general-php, .options-writing-php, .options-reading-php, .options-discussion-php, .options-media-php, .options-permalink-php, .profile-php, .user-edit-php, .user-new-php, .settings_page_slate-admin) .wrap .form-table > tbody > tr > th { padding-inline-start: 20px; }
+.sa-ui:is(.options-general-php, .options-writing-php, .options-reading-php, .options-discussion-php, .options-media-php, .options-permalink-php, .profile-php, .user-edit-php, .user-new-php, .settings_page_slate-admin) .wrap .form-table > tbody > tr > td { padding-inline-end: 20px; }
+
+@media screen and (max-width: 782px) {
+	.sa-ui:is(.options-general-php, .options-writing-php, .options-reading-php, .options-discussion-php, .options-media-php, .options-permalink-php, .profile-php, .user-edit-php, .user-new-php, .settings_page_slate-admin) .wrap .form-table > tbody > tr > th,
+	.sa-ui:is(.options-general-php, .options-writing-php, .options-reading-php, .options-discussion-php, .options-media-php, .options-permalink-php, .profile-php, .user-edit-php, .user-new-php, .settings_page_slate-admin) .wrap .form-table > tbody > tr > td { padding-inline: 16px; }
+}
+
 /* Cards */
 .sa-ui .postbox,
 .sa-ui .card,
@@ -970,7 +998,7 @@ body.sa-ui { font-size: 14px; }
 	color: var(--sa-text);
 	border: 1px solid var(--sa-line);
 	border-radius: var(--sa-radius-lg);
-	box-shadow: none;
+	box-shadow: var(--sa-shadow-sm);
 }
 
 .sa-ui .welcome-panel { overflow: hidden; }
@@ -1087,7 +1115,7 @@ body.sa-ui { font-size: 14px; }
 	border-radius: var(--sa-radius-lg);
 	border-spacing: 0;
 	border-collapse: separate;
-	box-shadow: none;
+	box-shadow: var(--sa-shadow-sm);
 	overflow: hidden;
 }
 
@@ -1404,7 +1432,25 @@ body.sa-ui { font-size: 14px; }
 .sa-ui .plugins .inactive .plugin-version-author-uri { color: var(--sa-subtle); }
 .sa-ui .plugins .plugin-update-tr .update-message { margin: 0 12px 12px 44px; }
 
-.sa-ui .plugin-card { overflow: hidden; }
+.sa-ui .plugin-card {
+	padding: 4px;
+	background: var(--sa-layer);
+	border-radius: 10px;
+	box-shadow: none;
+	box-sizing: border-box;
+}
+
+.sa-ui .plugin-card .plugin-card-top {
+	background: var(--sa-base);
+	border-radius: 7px;
+	box-shadow: 0 0 0 1px var(--sa-line), var(--sa-shadow-sm);
+}
+
+.sa-ui .plugin-card .plugin-card-bottom {
+	background: transparent;
+	border-top: 0;
+	border-radius: 0;
+}
 .sa-ui .plugin-card .name,
 .sa-ui .plugin-card h3 { color: var(--sa-strong); }
 .sa-ui .plugin-card .desc,
@@ -1549,6 +1595,34 @@ body.sa-ui { font-size: 14px; }
 .sa-ui #dashboard_activity .subsubsub { display: flex; float: none; margin: 8px 0 4px; }
 .sa-ui #dashboard-widgets .postbox table.widefat { border: 0; border-radius: 0; }
 .sa-ui #dashboard-widgets .postbox table th { font-style: normal; }
+
+/* Layered widgets: the title sits on a recessed layer, the body is a white
+   raised panel inside it. Dashboard only; edit-screen boxes stay simple. */
+.sa-ui #dashboard-widgets .postbox {
+	padding: 0 4px 4px;
+	background: var(--sa-layer);
+	border-radius: 10px;
+	box-shadow: none;
+}
+
+.sa-ui #dashboard-widgets .postbox .postbox-header {
+	border-bottom: 0;
+	padding: 0 4px;
+}
+
+.sa-ui #dashboard-widgets .postbox .postbox-header .hndle { padding: 9px 8px; }
+
+.sa-ui #dashboard-widgets .postbox > .inside {
+	margin: 0;
+	padding: 12px;
+	background: var(--sa-base);
+	border-radius: 7px;
+	box-shadow: 0 0 0 1px var(--sa-line), var(--sa-shadow-sm);
+	overflow: hidden;
+}
+
+.sa-ui #dashboard-widgets .postbox.closed { padding-bottom: 0; }
+.sa-ui #dashboard-widgets #dashboard_activity > .inside { padding-bottom: 0; }
 
 @media only screen and (min-width: 800px) {
 	.sa-ui #wpbody-content #dashboard-widgets {
