@@ -1,0 +1,1711 @@
+/*
+ * Slate Admin: admin skin.
+ *
+ * Structure
+ *   1. Tokens (light and dark in one place via light-dark())
+ *   2. Toolbar
+ *   3. Sidebar: colours everywhere, pill geometry when expanded (width is
+ *      left to core or to whichever plugin sets it)
+ *   4. Content: type, buttons, forms, cards, tables, notices, tabs
+ *   5. Screen-specific touches
+ *
+ * Body classes set by the plugin
+ *   .sa          every admin screen (toolbar and sidebar are skinned)
+ *   .sa-ui       normal screens (content is skinned too)
+ *   .sa-editor   block editor, site editor, customizer (content left alone)
+ *   .sa-scheme-light | .sa-scheme-dark | .sa-scheme-auto
+ */
+
+/* 1. Tokens ---------------------------------------------------------------- */
+
+:root {
+	color-scheme: light;
+
+	--sa-accent: #2f5bea;
+	--sa-on-accent: #fff;
+	--sa-accent-hover: color-mix(in oklab, var(--sa-accent), #000 14%);
+	--sa-accent-soft: color-mix(in oklab, var(--sa-accent) 14%, transparent);
+	/* Accent text. The plugin prints contrast-checked --sa-link-l / --sa-link-d
+	   for the chosen accent; the mixes here are only the fallback. */
+	--sa-link: light-dark(var(--sa-link-l, color-mix(in oklab, var(--sa-accent), #000 22%)), var(--sa-link-d, color-mix(in oklab, var(--sa-accent), #fff 48%)));
+	--sa-nav-active: light-dark(color-mix(in oklab, var(--sa-accent) 10%, transparent), color-mix(in oklab, var(--sa-accent) 26%, transparent));
+
+	--sa-canvas: light-dark(#fff, #0a0a0a);
+	--sa-side: light-dark(#fcfcfc, #0e0e0e);
+	--sa-chrome: light-dark(#fafafa, #131313);
+	--sa-base: light-dark(#fff, #171717);
+	--sa-control: light-dark(#fff, #1c1c1c);
+	--sa-tint: light-dark(#f2f2f2, #262626);
+	--sa-fill: light-dark(#e8e8e8, #303030);
+	--sa-raised: light-dark(#fff, #3a3a3a);
+
+	--sa-line: light-dark(rgba(10, 10, 10, 0.1), #2e2e2e);
+	--sa-hairline: light-dark(#ededed, #242424);
+	--sa-border: light-dark(#d6d6d6, #3d3d3d);
+
+	--sa-text: light-dark(#27272a, #e7e7e7);
+	--sa-strong: light-dark(#0a0a0a, #fafafa);
+	--sa-subtle: light-dark(#6b6b6b, #a3a3a3);
+	--sa-faint: light-dark(#a3a3a3, #6b6b6b);
+
+	--sa-success: light-dark(#0f7a54, #5ee0ab);
+	--sa-success-tint: light-dark(#eefaf3, #10261d);
+	--sa-warning: light-dark(#a15c07, #f5b35a);
+	--sa-warning-tint: light-dark(#fff8e6, #2a2010);
+	--sa-danger: light-dark(#c1272d, #ff8a84);
+	--sa-danger-tint: light-dark(#fdf0ef, #2c1514);
+	--sa-info: light-dark(#1d4fd8, #8fb4ff);
+	--sa-info-tint: light-dark(#eff4ff, #141d33);
+	--sa-purple: light-dark(#6d28d9, #c4a5ff);
+	--sa-purple-tint: light-dark(#f4f0ff, #21183a);
+
+	/* Solid versions for dots, edges and icons. */
+	--sa-success-solid: light-dark(#16a34a, #4ade80);
+	--sa-warning-solid: light-dark(#d97706, #fbbf24);
+	--sa-danger-solid: light-dark(#dc2626, #f87171);
+	--sa-info-solid: light-dark(#2563eb, #7aa7ff);
+	--sa-purple-solid: light-dark(#7c3aed, #b794ff);
+
+	--sa-radius: 8px;
+	--sa-radius-lg: 8px;
+	--sa-gutter-start: 32px;
+	--sa-gutter-end: 28px;
+	--sa-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif;
+	--sa-focus: 0 0 0 2px var(--sa-base), 0 0 0 4px var(--sa-accent);
+	--sa-pop: 0 0 0 1px var(--sa-line), 0 8px 24px -6px rgba(0, 0, 0, 0.18);
+}
+
+:root:has(body.sa-scheme-dark) { color-scheme: dark; }
+:root:has(body.sa-scheme-auto) { color-scheme: light dark; }
+
+/* 2. Toolbar ---------------------------------------------------------------- */
+
+.sa #wpadminbar {
+	background: var(--sa-side);
+	color: var(--sa-text);
+	font-family: var(--sa-font);
+	box-shadow: inset 0 -1px 0 var(--sa-line);
+}
+
+.sa #wpadminbar .ab-item,
+.sa #wpadminbar a.ab-item,
+.sa #wpadminbar > #wp-toolbar span.ab-label,
+.sa #wpadminbar > #wp-toolbar span.noticon,
+.sa #wpadminbar .ab-empty-item,
+.sa #wpadminbar .quicklinks .menupop ul li .ab-item,
+.sa #wpadminbar .quicklinks .menupop.hover ul li .ab-item {
+	color: var(--sa-text);
+}
+
+.sa #wpadminbar .ab-icon,
+.sa #wpadminbar .ab-icon::before,
+.sa #wpadminbar .ab-item::before,
+.sa #wpadminbar .ab-item::after,
+.sa #wpadminbar #adminbarsearch::before {
+	color: var(--sa-subtle);
+}
+
+.sa #wpadminbar .ab-top-menu > li > .ab-item { border-radius: 6px; }
+
+.sa #wpadminbar:not(.mobile) .ab-top-menu > li:hover > .ab-item,
+.sa #wpadminbar:not(.mobile) .ab-top-menu > li > .ab-item:focus,
+.sa #wpadminbar .ab-top-menu > li.hover > .ab-item,
+.sa #wpadminbar .ab-top-menu > li.menupop.hover > .ab-item,
+.sa #wpadminbar.nojq .quicklinks .ab-top-menu > li > .ab-item:focus {
+	background: var(--sa-tint);
+	color: var(--sa-strong);
+}
+
+.sa #wpadminbar:not(.mobile) > #wp-toolbar li:hover span.ab-label,
+.sa #wpadminbar:not(.mobile) > #wp-toolbar li.hover span.ab-label,
+.sa #wpadminbar:not(.mobile) > #wp-toolbar a:focus span.ab-label,
+.sa #wpadminbar li:hover .ab-icon::before,
+.sa #wpadminbar li:hover .ab-item::before,
+.sa #wpadminbar li.hover .ab-icon::before,
+.sa #wpadminbar li.hover .ab-item::before,
+.sa #wpadminbar li a:focus .ab-icon::before,
+.sa #wpadminbar li .ab-item:focus::before,
+.sa #wpadminbar li .ab-item:focus .ab-icon::before {
+	color: var(--sa-strong);
+}
+
+/* Dropdowns */
+.sa #wpadminbar .menupop .ab-sub-wrapper,
+.sa #wpadminbar .shortlink-input {
+	background: var(--sa-base);
+	box-shadow: var(--sa-pop);
+	border-radius: 10px;
+	margin-top: 4px;
+	overflow: hidden;
+}
+
+.sa #wpadminbar .menupop .ab-sub-wrapper::before {
+	/* Keeps the dropdown open while the pointer crosses the 4px gap. */
+	content: "";
+	position: absolute;
+	inset: -6px 0 auto;
+	height: 6px;
+}
+
+.sa #wpadminbar .menupop .ab-sub-wrapper { overflow: visible; }
+
+.sa #wpadminbar .quicklinks .menupop ul.ab-sub-secondary,
+.sa #wpadminbar .quicklinks .menupop ul.ab-sub-secondary .ab-submenu {
+	background: var(--sa-chrome);
+	border-radius: 0 0 10px 10px;
+}
+
+.sa #wpadminbar .quicklinks .menupop ul li a:hover,
+.sa #wpadminbar .quicklinks .menupop ul li a:focus,
+.sa #wpadminbar .quicklinks .menupop ul li a:hover strong,
+.sa #wpadminbar .quicklinks .menupop ul li a:focus strong,
+.sa #wpadminbar .quicklinks .ab-sub-wrapper .menupop.hover > a,
+.sa #wpadminbar .quicklinks .menupop.hover ul li a:hover,
+.sa #wpadminbar .quicklinks .menupop.hover ul li a:focus,
+.sa #wpadminbar li:hover #wp-admin-bar-user-info .display-name,
+.sa #wpadminbar #wp-admin-bar-user-info a:hover .display-name {
+	color: var(--sa-strong);
+	background: transparent;
+}
+
+.sa #wpadminbar .quicklinks .menupop ul li a:hover,
+.sa #wpadminbar .quicklinks .menupop ul li a:focus { background: var(--sa-tint); }
+
+.sa #wpadminbar #wp-admin-bar-user-info .display-name { color: var(--sa-strong); }
+.sa #wpadminbar #wp-admin-bar-user-info .username { color: var(--sa-subtle); }
+
+.sa #wpadminbar #wp-admin-bar-my-account.with-avatar > .ab-empty-item img,
+.sa #wpadminbar #wp-admin-bar-my-account.with-avatar > a img {
+	border: 0;
+	border-radius: 50%;
+	background: var(--sa-fill);
+}
+
+.sa #wpadminbar #wp-admin-bar-user-info .avatar { border-radius: 50%; }
+
+.sa #wpadminbar #wp-admin-bar-slate-scheme .ab-icon { margin-right: 4px; }
+.sa #wpadminbar #wp-admin-bar-slate-scheme .ab-icon::before { top: 3px; font-size: 18px; }
+
+/* Command palette shortcut (WordPress 6.9 and later) as a quiet search pill. */
+@media screen and (min-width: 783px) {
+	.sa #wpadminbar li#wp-admin-bar-command-palette > .ab-item {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+		height: 24px;
+		margin: 4px 6px;
+		padding: 0 8px 0 6px;
+		background: var(--sa-control);
+		box-shadow: inset 0 0 0 1px var(--sa-border);
+		border-radius: 6px;
+	}
+	.sa #wpadminbar li#wp-admin-bar-command-palette > .ab-item:hover { background: var(--sa-tint); }
+	.sa #wpadminbar li#wp-admin-bar-command-palette > .ab-item .ab-icon {
+		float: none;
+		display: flex;
+		align-items: center;
+		width: 14px;
+		height: 14px;
+		margin: 0;
+		padding: 0;
+	}
+	.sa #wpadminbar li#wp-admin-bar-command-palette > .ab-item .ab-icon::before {
+		position: static;
+		float: none;
+		display: block;
+		padding: 0;
+		font-size: 14px;
+		line-height: 14px;
+		width: 14px;
+		height: 14px;
+	}
+	.sa #wpadminbar li#wp-admin-bar-command-palette > .ab-item .ab-label { display: flex; align-items: center; height: 24px; line-height: 1; }
+	.sa #wpadminbar li#wp-admin-bar-command-palette kbd {
+		display: inline;
+		margin: 0;
+		padding: 0;
+		background: none;
+		line-height: 1;
+		color: var(--sa-subtle);
+		font-family: var(--sa-font);
+		font-size: 12px;
+	}
+}
+
+/* Mobile toolbar icons */
+.sa #wpadminbar .ab-top-menu > .menupop > .ab-sub-wrapper .ab-item { border-radius: 0; }
+.sa .wp-responsive-open #wpadminbar #wp-admin-bar-menu-toggle a { background: var(--sa-fill); }
+.sa #wpadminbar #wp-admin-bar-menu-toggle .ab-icon::before { color: var(--sa-text); }
+.sa .wp-responsive-open #wpadminbar #wp-admin-bar-menu-toggle .ab-icon::before { color: var(--sa-strong); }
+
+/* Dropdown content from other plugins is usually written for a dark bar. */
+.sa #wpadminbar .ab-sub-wrapper table,
+.sa #wpadminbar .ab-sub-wrapper tr,
+.sa #wpadminbar .ab-sub-wrapper td,
+.sa #wpadminbar .ab-sub-wrapper th { background: transparent !important; }
+
+.sa #wpadminbar .ab-sub-wrapper td,
+.sa #wpadminbar .ab-sub-wrapper th,
+.sa #wpadminbar .ab-sub-wrapper p,
+.sa #wpadminbar .ab-sub-wrapper .ab-item,
+.sa #wpadminbar .ab-sub-wrapper .ab-empty-item { color: var(--sa-text) !important; }
+
+.sa #wpadminbar .ab-sub-wrapper .ab-item:hover { color: var(--sa-strong) !important; }
+
+/* Autoptimize cache meter */
+.sa #wpadminbar #wp-admin-bar-autoptimize-cache-info p { color: var(--sa-subtle) !important; }
+.sa #wpadminbar #wp-admin-bar-autoptimize .autoptimize-radial-bar { background-color: var(--sa-fill); }
+.sa #wpadminbar #wp-admin-bar-autoptimize .autoptimize-radial-bar .inset { background-color: var(--sa-base) !important; }
+.sa #wpadminbar #wp-admin-bar-autoptimize td.green,
+.sa #wpadminbar #wp-admin-bar-autoptimize .numbers.green { color: var(--sa-success) !important; }
+.sa #wpadminbar #wp-admin-bar-autoptimize td.orange,
+.sa #wpadminbar #wp-admin-bar-autoptimize .numbers.orange { color: var(--sa-warning) !important; }
+.sa #wpadminbar #wp-admin-bar-autoptimize td.red,
+.sa #wpadminbar #wp-admin-bar-autoptimize .numbers.red { color: var(--sa-danger) !important; }
+.sa #wpadminbar #wp-admin-bar-autoptimize-delete-cache .ab-item {
+	background: var(--sa-chrome) !important;
+	border-top: 1px solid var(--sa-hairline);
+	border-radius: 0 0 10px 10px;
+}
+.sa #wpadminbar #wp-admin-bar-autoptimize-delete-cache .ab-item:hover {
+	background: var(--sa-danger-tint) !important;
+	color: var(--sa-danger) !important;
+}
+
+/* Keep right-hand dropdowns off the screen edge. */
+.sa #wpadminbar .ab-top-secondary .menupop .ab-sub-wrapper { right: 6px; }
+
+/* 3. Sidebar ---------------------------------------------------------------- */
+
+.sa #adminmenuback,
+.sa #adminmenuwrap,
+.sa #adminmenu {
+	background: var(--sa-side);
+}
+
+.sa #adminmenuback,
+.sa #adminmenuwrap { box-shadow: inset -1px 0 0 var(--sa-line); }
+.sa #adminmenu { background: transparent; }
+
+.sa #adminmenu,
+.sa #adminmenu a { font-family: var(--sa-font); }
+
+.sa #adminmenu a,
+.sa #adminmenu div.wp-menu-name { color: var(--sa-text); }
+
+.sa #adminmenu div.wp-menu-image::before,
+.sa #adminmenu .wp-menu-image.svg { color: var(--sa-subtle); }
+
+.sa #adminmenu .wp-menu-image img { opacity: 0.75; }
+
+.sa #adminmenu li.wp-menu-separator { background: transparent; }
+
+.sa #adminmenu li.menu-top:hover,
+.sa #adminmenu li.opensub > a.menu-top,
+.sa #adminmenu li > a.menu-top:focus {
+	background: transparent;
+	color: var(--sa-strong);
+}
+
+.sa #adminmenu li.menu-top:hover > a.menu-top,
+.sa #adminmenu li.opensub > a.menu-top,
+.sa #adminmenu li > a.menu-top:focus {
+	background: var(--sa-tint);
+	box-shadow: none;
+}
+
+.sa #adminmenu li.menu-top:hover div.wp-menu-name,
+.sa #adminmenu li.opensub div.wp-menu-name { color: var(--sa-strong); }
+
+.sa #adminmenu li:hover div.wp-menu-image::before,
+.sa #adminmenu li a:focus div.wp-menu-image::before,
+.sa #adminmenu li.opensub div.wp-menu-image::before { color: var(--sa-strong); }
+
+/* Current section: soft accent pill, accent text and icon. */
+.sa #adminmenu li.wp-has-current-submenu,
+.sa #adminmenu li.current.menu-top,
+.sa #adminmenu li.wp-has-current-submenu:hover { background: transparent; }
+
+.sa #adminmenu li.wp-has-current-submenu a.wp-has-current-submenu,
+.sa #adminmenu li.current a.menu-top,
+.sa #adminmenu .wp-menu-arrow,
+.sa #adminmenu .wp-menu-arrow div,
+.sa.folded #adminmenu li.current.menu-top,
+.sa.folded #adminmenu li.wp-has-current-submenu {
+	background: var(--sa-nav-active);
+	color: var(--sa-link);
+}
+
+.sa #adminmenu li.wp-has-current-submenu:hover > a.menu-top,
+.sa #adminmenu li.current.menu-top:hover > a.menu-top,
+.sa #adminmenu li.wp-has-current-submenu > a.menu-top:focus { background: var(--sa-nav-active); }
+
+.sa #adminmenu li.wp-has-current-submenu div.wp-menu-name,
+.sa #adminmenu li.current div.wp-menu-name,
+.sa #adminmenu li.wp-has-current-submenu:hover div.wp-menu-name,
+.sa #adminmenu li.current.menu-top:hover div.wp-menu-name {
+	color: var(--sa-link);
+	font-weight: 600;
+}
+
+.sa #adminmenu li.wp-has-current-submenu div.wp-menu-image::before,
+.sa #adminmenu a.wp-has-current-submenu:hover div.wp-menu-image::before,
+.sa #adminmenu li.current div.wp-menu-image::before,
+.sa #adminmenu a.current:hover div.wp-menu-image::before,
+.sa #adminmenu li.wp-has-current-submenu a:focus div.wp-menu-image::before,
+.sa #adminmenu li.wp-has-current-submenu.opensub div.wp-menu-image::before,
+.sa #adminmenu li.wp-has-current-submenu:hover div.wp-menu-image::before,
+.sa #adminmenu li.current:hover div.wp-menu-image::before { color: var(--sa-link); }
+
+/* The little triangle that points at the content. */
+.sa ul#adminmenu a.wp-has-current-submenu::after,
+.sa ul#adminmenu > li.current > a.current::after,
+.sa ul#adminmenu > li a.current::after { display: none !important; }
+
+/* Submenus */
+.sa #adminmenu .wp-submenu,
+.sa #adminmenu .wp-has-current-submenu .wp-submenu,
+.sa #adminmenu .wp-has-current-submenu.opensub .wp-submenu,
+.sa #adminmenu a.wp-has-current-submenu:focus + .wp-submenu { background: transparent; }
+
+.sa #adminmenu .wp-submenu a,
+.sa #adminmenu .wp-has-current-submenu .wp-submenu a { color: var(--sa-subtle); }
+
+.sa #adminmenu .wp-submenu a:hover,
+.sa #adminmenu .wp-submenu a:focus,
+.sa #adminmenu .wp-has-current-submenu .wp-submenu a:hover,
+.sa #adminmenu .wp-has-current-submenu .wp-submenu a:focus {
+	color: var(--sa-strong);
+	box-shadow: none;
+}
+
+.sa #adminmenu .wp-submenu li.current a,
+.sa #adminmenu .wp-submenu li.current a:hover,
+.sa #adminmenu .wp-submenu li.current a:focus,
+.sa #adminmenu .opensub .wp-submenu li.current a,
+.sa #adminmenu a.wp-has-current-submenu:focus + .wp-submenu li.current a,
+.sa #adminmenu .wp-has-current-submenu .wp-submenu li.current a {
+	color: var(--sa-link);
+	font-weight: 600;
+}
+
+.sa #adminmenu .wp-submenu .wp-submenu-head,
+.sa.folded #adminmenu .wp-submenu .wp-submenu-head { color: var(--sa-strong); }
+
+/* Fly-out submenus (hovering a section that is not open) */
+.sa #adminmenu .wp-not-current-submenu .wp-submenu,
+.sa.folded #adminmenu .wp-has-current-submenu .wp-submenu {
+	background: var(--sa-base);
+	box-shadow: var(--sa-pop);
+	border: 0;
+	border-radius: 10px;
+	padding: 6px;
+	box-sizing: border-box;
+}
+
+.sa #adminmenu .wp-not-current-submenu .wp-submenu li,
+.sa.folded #adminmenu .wp-has-current-submenu .wp-submenu li { margin: 0; padding: 0; }
+
+.sa #adminmenu .wp-not-current-submenu .wp-submenu li > a,
+.sa.folded #adminmenu .wp-has-current-submenu .wp-submenu li > a {
+	display: block;
+	margin: 0;
+	padding: 6px 10px;
+	border-radius: 6px;
+	color: var(--sa-text);
+	font-size: 13px;
+	line-height: 18px;
+}
+
+.sa #adminmenu .wp-not-current-submenu .wp-submenu li + li,
+.sa.folded #adminmenu .wp-has-current-submenu .wp-submenu li + li { margin-top: 1px; }
+
+.sa #adminmenu .wp-submenu li.wp-submenu-head,
+.sa.auto-fold #adminmenu .wp-submenu li.wp-submenu-head,
+.sa.folded #adminmenu .wp-submenu li.wp-submenu-head {
+	margin: 0;
+	padding: 6px 10px 4px;
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--sa-subtle);
+}
+
+.sa #adminmenu .wp-not-current-submenu .wp-submenu a:hover,
+.sa #adminmenu .wp-not-current-submenu .wp-submenu a:focus,
+.sa.folded #adminmenu .wp-has-current-submenu .wp-submenu a:hover { background: var(--sa-tint); }
+
+.sa #adminmenu li.wp-has-submenu.wp-not-current-submenu.opensub:hover::after,
+.sa #adminmenu li.wp-has-submenu.wp-not-current-submenu:focus-within::after { display: none; }
+
+/* Folded sidebar (manual, or automatic below 961px): same even inset. */
+.sa.folded #adminmenu .wp-submenu li.wp-submenu-head { border: 0; }
+.sa.folded #adminmenu .wp-submenu li > a { padding: 6px 10px; }
+
+@media screen and (min-width: 783px) and (max-width: 960px) {
+	.sa.auto-fold #adminmenu .wp-submenu li.wp-submenu-head { border: 0; }
+	.sa.auto-fold #adminmenu .wp-submenu li > a { padding: 6px 10px; }
+}
+
+/* Count bubbles */
+.sa #adminmenu .awaiting-mod,
+.sa #adminmenu .update-plugins,
+.sa #adminmenu .menu-counter,
+.sa #adminmenu li.current a .awaiting-mod,
+.sa #adminmenu li a.wp-has-current-submenu .update-plugins,
+.sa #adminmenu li:hover a .awaiting-mod,
+.sa #adminmenu li.menu-top:hover > a .update-plugins {
+	background: var(--sa-accent);
+	color: var(--sa-on-accent);
+	border-radius: 999px;
+	font-weight: 600;
+}
+
+/* Updates are a "should do", not a "new for you": amber, tinted. */
+.sa #adminmenu .update-plugins,
+.sa #adminmenu li.current a .update-plugins,
+.sa #adminmenu li a.wp-has-current-submenu .update-plugins,
+.sa #adminmenu li.menu-top:hover > a .update-plugins,
+.sa #adminmenu .wp-submenu a .update-plugins {
+	background: var(--sa-warning-tint);
+	color: var(--sa-warning);
+	box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--sa-warning) 35%, transparent);
+}
+
+/* Collapse button */
+.sa #collapse-button,
+.sa #collapse-button .collapse-button-icon::after { color: var(--sa-subtle); }
+.sa #collapse-button:hover,
+.sa #collapse-button:hover .collapse-button-icon::after,
+.sa #collapse-button:focus,
+.sa #collapse-button:focus .collapse-button-icon::after { color: var(--sa-strong); }
+
+/* Pill geometry, only while the menu is expanded on wide screens. Folded and
+   mobile layouts keep core sizes. Width is never set here. */
+@media screen and (min-width: 961px) {
+	.sa:not(.folded) #adminmenu { margin: 8px 0 12px; }
+
+	.sa:not(.folded) #adminmenu li.menu-top {
+		min-height: 0;
+		padding: 1px 8px;
+		box-sizing: border-box;
+	}
+
+	.sa:not(.folded) #adminmenu a.menu-top {
+		display: flex;
+		align-items: center;
+		min-height: 32px;
+		border-radius: var(--sa-radius);
+		font-size: 14px;
+		line-height: 1.3;
+	}
+
+	.sa:not(.folded) #adminmenu div.wp-menu-image {
+		float: none;
+		flex: 0 0 32px;
+		width: 32px;
+		height: 32px;
+	}
+
+	.sa:not(.folded) #adminmenu div.wp-menu-image::before {
+		padding: 8px 0;
+		font-size: 16px;
+		width: 16px;
+		height: 16px;
+	}
+
+	.sa:not(.folded) #adminmenu div.wp-menu-image img { padding: 8px 0 0; width: 16px; height: 16px; }
+	.sa:not(.folded) #adminmenu div.wp-menu-image.svg { background-size: 16px auto; }
+
+	.sa:not(.folded) #adminmenu div.wp-menu-name {
+		flex: 1 1 auto;
+		min-width: 0;
+		padding: 6px 8px 6px 0;
+	}
+
+	/* Chevrons: right for a closed section, down for the open one. */
+	.sa:not(.folded) #adminmenu li.wp-has-submenu > a.menu-top div.wp-menu-name {
+		padding-inline-end: 24px;
+		background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none' stroke='%239a9a9a' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4.5 2.5 3.5 3.5-3.5 3.5'/%3E%3C/svg%3E") no-repeat right 8px center / 12px 12px;
+	}
+
+	.sa:not(.folded) #adminmenu li.wp-has-current-submenu > a.menu-top div.wp-menu-name {
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none' stroke='%239a9a9a' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m2.5 4.5 3.5 3.5 3.5-3.5'/%3E%3C/svg%3E");
+	}
+
+	.rtl.sa:not(.folded) #adminmenu li.wp-has-submenu > a.menu-top div.wp-menu-name { background-position: left 8px center; }
+
+	.sa:not(.folded) #adminmenu li.wp-menu-separator {
+		height: 1px;
+		margin: 7px 16px;
+		padding: 0;
+		background: var(--sa-hairline);
+	}
+
+	/* Open section: indented list with a guide line. */
+	.sa:not(.folded) #adminmenu .wp-has-current-submenu .wp-submenu {
+		width: auto;
+		min-width: 0;
+		margin: 3px 0 6px 23px;
+		padding: 0 0 0 7px;
+		border-inline-start: 1px solid var(--sa-line);
+	}
+
+	.sa:not(.folded) #adminmenu .wp-has-current-submenu .wp-submenu a {
+		padding: 5px 8px;
+		border-radius: 6px;
+		font-size: 13px;
+		line-height: 1.4;
+	}
+
+	.sa:not(.folded) #adminmenu .wp-has-current-submenu .wp-submenu a:hover { background: var(--sa-tint); }
+
+	.sa:not(.folded) #adminmenu .wp-not-current-submenu .wp-submenu { margin-top: 0; box-sizing: border-box; }
+
+	.sa:not(.folded) #collapse-button {
+		margin: 6px 8px;
+		padding: 0;
+		width: calc(100% - 16px);
+		border-radius: var(--sa-radius);
+	}
+
+	.sa:not(.folded) #collapse-button:hover { background: var(--sa-tint); }
+}
+
+/* 4. Content ---------------------------------------------------------------- */
+
+html:has(body.sa-ui),
+body.sa-ui {
+	background: var(--sa-canvas);
+}
+
+body.sa-ui,
+.sa-ui #wpcontent,
+.sa-ui #wpfooter {
+	color: var(--sa-text);
+	font-family: var(--sa-font);
+}
+
+body.sa-ui { font-size: 14px; }
+
+.sa-ui #wpbody-content { padding-bottom: 80px; }
+
+.sa-ui p,
+.sa-ui li,
+.sa-ui dd,
+.sa-ui label,
+.sa-ui .form-table td,
+.sa-ui .form-table td p { font-size: 14px; }
+
+.sa-ui p.description,
+.sa-ui .description,
+.sa-ui .form-table td p.description,
+.sa-ui .howto {
+	color: var(--sa-subtle);
+	font-size: 13px;
+	font-style: normal;
+}
+
+.sa-ui h1,
+.sa-ui h2,
+.sa-ui h3,
+.sa-ui h4,
+.sa-ui .wrap h1,
+.sa-ui .wrap h2 { color: var(--sa-strong); }
+
+.sa-ui .wrap { margin-top: 14px; margin-inline-end: var(--sa-gutter-end); }
+
+.sa-ui .wrap h1,
+.sa-ui .wrap h1.wp-heading-inline {
+	font-size: 20px;
+	font-weight: 600;
+	line-height: 1.3;
+	padding: 6px 0 10px;
+}
+
+/* Page header: title, then a hairline that runs the full width of the content
+   area. Drawn as a clipped shadow so it never adds a horizontal scrollbar. */
+.sa-ui .wrap > h1:not(.wp-heading-inline):not(.nav-tab-wrapper):not(.screen-reader-text) {
+	position: relative;
+	margin: 0 0 20px;
+	padding: 6px 0 16px;
+}
+
+.sa-ui .wrap > h1:not(.wp-heading-inline):not(.nav-tab-wrapper):not(.screen-reader-text)::after,
+.sa-ui .wrap > hr.wp-header-end {
+	display: block;
+	height: 1px;
+	border: 0;
+	background: var(--sa-hairline);
+	box-shadow: 0 0 0 100vmax var(--sa-hairline);
+	clip-path: inset(0 -100vmax);
+}
+
+.sa-ui .wrap > h1:not(.wp-heading-inline):not(.nav-tab-wrapper):not(.screen-reader-text)::after {
+	content: "";
+	position: absolute;
+	inset: auto 0 0;
+}
+
+.sa-ui .wrap > hr.wp-header-end {
+	visibility: visible;
+	margin: 6px 0 20px;
+}
+
+/* Optional: keep content to a readable width and centre it on wide screens. */
+.sa-w-centered.sa-ui .wrap {
+	max-width: 1440px;
+	margin-inline: auto;
+	padding-inline-end: var(--sa-gutter-end);
+	box-sizing: border-box;
+}
+
+@media screen and (min-width: 783px) {
+	.sa-ui #wpcontent { padding-inline-start: var(--sa-gutter-start); }
+}
+
+.sa-ui a { color: var(--sa-link); }
+.sa-ui a:hover,
+.sa-ui a:active { color: var(--sa-accent); }
+.sa-ui a:focus-visible,
+.sa-ui a:focus {
+	color: var(--sa-accent);
+	box-shadow: 0 0 0 2px var(--sa-accent-soft);
+	outline: 1px solid transparent;
+	border-radius: 3px;
+}
+
+.sa-ui code,
+.sa-ui kbd {
+	background: var(--sa-tint);
+	color: var(--sa-strong);
+	border-radius: 5px;
+	padding: 2px 6px;
+	font-size: 13px;
+}
+
+.sa-ui hr { border: 0; border-top: 1px solid var(--sa-hairline); }
+
+.sa-ui #wpfooter { color: var(--sa-subtle); }
+.sa-ui #wpfooter p { font-size: 13px; }
+
+/* Buttons */
+.sa-ui.wp-core-ui .button,
+.sa-ui.wp-core-ui .button-secondary,
+.sa-ui .wrap .page-title-action,
+.sa-ui .wrap .add-new-h2 {
+	min-height: 36px;
+	padding: 0 14px;
+	line-height: 34px;
+	font-size: 14px;
+	font-weight: 500;
+	font-family: var(--sa-font);
+	color: var(--sa-strong);
+	background: var(--sa-control);
+	border: 1px solid var(--sa-border);
+	border-radius: var(--sa-radius);
+	box-shadow: none;
+	text-shadow: none;
+}
+
+.sa-ui.wp-core-ui .button:hover,
+.sa-ui.wp-core-ui .button-secondary:hover,
+.sa-ui .wrap .page-title-action:hover,
+.sa-ui .wrap .add-new-h2:hover {
+	color: var(--sa-strong);
+	background: var(--sa-tint);
+	border-color: var(--sa-border);
+}
+
+.sa-ui.wp-core-ui .button:focus,
+.sa-ui.wp-core-ui .button-secondary:focus,
+.sa-ui .wrap .page-title-action:focus {
+	color: var(--sa-strong);
+	background: var(--sa-control);
+	border-color: var(--sa-border);
+	box-shadow: var(--sa-focus);
+	outline: 2px solid transparent;
+}
+
+.sa-ui.wp-core-ui .button:active { background: var(--sa-fill); border-color: var(--sa-border); }
+
+.sa-ui.wp-core-ui .button.button-small,
+.sa-ui.wp-core-ui .button-group.button-small .button {
+	min-height: 28px;
+	line-height: 26px;
+	padding: 0 10px;
+	font-size: 13px;
+	border-radius: 6px;
+}
+
+.sa-ui.wp-core-ui .button.button-large,
+.sa-ui.wp-core-ui .button-group.button-large .button {
+	min-height: 40px;
+	line-height: 38px;
+	padding: 0 16px;
+}
+
+.sa-ui.wp-core-ui .button.button-hero {
+	min-height: 46px;
+	line-height: 44px;
+	padding: 0 24px;
+	font-size: 15px;
+}
+
+.sa-ui .wrap .page-title-action,
+.sa-ui .wrap .add-new-h2 {
+	min-height: 32px;
+	line-height: 30px;
+	padding: 0 12px;
+	top: -4px;
+	margin-inline-start: 8px;
+	display: inline-block;
+	box-sizing: border-box;
+}
+
+.sa-ui.wp-core-ui .button-primary,
+.sa-ui.wp-core-ui .button.button-primary {
+	color: var(--sa-on-accent);
+	background: var(--sa-accent);
+	border-color: transparent;
+}
+
+.sa-ui.wp-core-ui .button-primary:hover,
+.sa-ui.wp-core-ui .button.button-primary:hover,
+.sa-ui.wp-core-ui .button-primary:active,
+.sa-ui.wp-core-ui .button.button-primary:active {
+	color: var(--sa-on-accent);
+	background: var(--sa-accent-hover);
+	border-color: transparent;
+}
+
+.sa-ui.wp-core-ui .button-primary:focus,
+.sa-ui.wp-core-ui .button.button-primary:focus {
+	color: var(--sa-on-accent);
+	background: var(--sa-accent);
+	border-color: transparent;
+	box-shadow: var(--sa-focus);
+}
+
+.sa-ui.wp-core-ui .button[disabled],
+.sa-ui.wp-core-ui .button:disabled,
+.sa-ui.wp-core-ui .button.disabled,
+.sa-ui.wp-core-ui .button-primary[disabled],
+.sa-ui.wp-core-ui .button-primary:disabled,
+.sa-ui.wp-core-ui .button-primary.disabled {
+	color: var(--sa-faint) !important;
+	background: var(--sa-tint) !important;
+	border-color: var(--sa-hairline) !important;
+	box-shadow: none !important;
+}
+
+.sa-ui.wp-core-ui .button-link { color: var(--sa-link); }
+.sa-ui.wp-core-ui .button-link-delete,
+.sa-ui.wp-core-ui .button.button-link-delete,
+.sa-ui .submitdelete,
+.sa-ui .row-actions span.delete a,
+.sa-ui .row-actions span.trash a,
+.sa-ui .row-actions span.spam a,
+.sa-ui #delete-action .submitdelete { color: var(--sa-danger); }
+
+.sa-ui.wp-core-ui .button .dashicons,
+.sa-ui.wp-core-ui .button.wp-hide-pw .dashicons { line-height: 34px; height: 34px; }
+
+/* Form controls */
+.sa-ui input[type="text"],
+.sa-ui input[type="password"],
+.sa-ui input[type="email"],
+.sa-ui input[type="url"],
+.sa-ui input[type="search"],
+.sa-ui input[type="number"],
+.sa-ui input[type="tel"],
+.sa-ui input[type="date"],
+.sa-ui input[type="datetime-local"],
+.sa-ui input[type="month"],
+.sa-ui input[type="week"],
+.sa-ui input[type="time"],
+.sa-ui select,
+.sa-ui textarea {
+	min-height: 36px;
+	padding: 0 10px;
+	font-size: 14px;
+	font-family: var(--sa-font);
+	line-height: 1.4;
+	color: var(--sa-strong);
+	background-color: var(--sa-control);
+	border: 1px solid var(--sa-border);
+	border-radius: var(--sa-radius);
+	box-shadow: none;
+}
+
+.sa-ui textarea { padding: 8px 10px; line-height: 1.5; }
+.sa-ui textarea.code,
+.sa-ui input.code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; }
+
+.sa-ui.wp-core-ui select,
+.sa-ui select {
+	padding: 0 30px 0 10px;
+	line-height: 34px;
+	color: var(--sa-strong);
+	background-color: var(--sa-control);
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='%23868686' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: right 8px center;
+	background-size: 16px 16px;
+	border-color: var(--sa-border);
+}
+
+.rtl.sa-ui select { padding: 0 10px 0 30px; background-position: left 8px center; }
+
+.sa-ui.wp-core-ui select[multiple],
+.sa-ui select[multiple] { background-image: none; padding: 6px; line-height: 1.4; height: auto; }
+
+.sa-ui.wp-core-ui select:hover { color: var(--sa-strong); border-color: var(--sa-faint); }
+
+.sa-ui input::placeholder,
+.sa-ui textarea::placeholder { color: var(--sa-faint); }
+
+.sa-ui input[type="text"]:focus,
+.sa-ui input[type="password"]:focus,
+.sa-ui input[type="email"]:focus,
+.sa-ui input[type="url"]:focus,
+.sa-ui input[type="search"]:focus,
+.sa-ui input[type="number"]:focus,
+.sa-ui input[type="tel"]:focus,
+.sa-ui input[type="date"]:focus,
+.sa-ui input[type="datetime-local"]:focus,
+.sa-ui input[type="month"]:focus,
+.sa-ui input[type="week"]:focus,
+.sa-ui input[type="time"]:focus,
+.sa-ui.wp-core-ui select:focus,
+.sa-ui select:focus,
+.sa-ui textarea:focus,
+.sa-ui input[type="checkbox"]:focus,
+.sa-ui input[type="radio"]:focus {
+	color: var(--sa-strong);
+	border-color: var(--sa-accent);
+	box-shadow: 0 0 0 3px var(--sa-accent-soft);
+	outline: 2px solid transparent;
+}
+
+.sa-ui input:disabled,
+.sa-ui input.disabled,
+.sa-ui select:disabled,
+.sa-ui textarea:disabled,
+.sa-ui input[readonly],
+.sa-ui textarea[readonly] {
+	color: var(--sa-subtle);
+	background-color: var(--sa-tint);
+	border-color: var(--sa-hairline);
+	box-shadow: none;
+}
+
+.sa-ui input[type="checkbox"],
+.sa-ui input[type="radio"] {
+	border: 1px solid var(--sa-border);
+	background: var(--sa-control);
+	box-shadow: none;
+}
+
+.sa-ui input[type="checkbox"] { border-radius: 4px; }
+
+.sa-ui input[type="checkbox"]:checked,
+.sa-ui input[type="radio"]:checked {
+	border-color: var(--sa-accent);
+	background: var(--sa-accent);
+}
+
+.sa-ui input[type="checkbox"]:checked::before {
+	content: "";
+	display: block;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	background: var(--sa-on-accent);
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m3.8 8.4 2.7 2.7 5.7-6'/%3E%3C/svg%3E") center / contain no-repeat;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m3.8 8.4 2.7 2.7 5.7-6'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.sa-ui input[type="radio"]:checked::before {
+	background-color: var(--sa-on-accent);
+}
+
+.sa-ui input[type="color"] {
+	width: 48px;
+	height: 36px;
+	padding: 3px;
+	border: 1px solid var(--sa-border);
+	border-radius: var(--sa-radius);
+	background: var(--sa-control);
+}
+
+.sa-ui .form-table th,
+.sa-ui .form-wrap label {
+	color: var(--sa-strong);
+	font-weight: 500;
+	font-size: 14px;
+}
+
+.sa-ui .form-table td,
+.sa-ui .form-table th { padding-top: 16px; padding-bottom: 16px; }
+
+.sa-ui .form-table tr + tr th,
+.sa-ui .form-table tr + tr td { border-top: 1px solid var(--sa-hairline); }
+
+.sa-ui .form-table fieldset label { font-weight: 400; }
+
+/* Cards */
+.sa-ui .postbox,
+.sa-ui .card,
+.sa-ui .stuffbox,
+.sa-ui .welcome-panel,
+.sa-ui #screen-meta,
+.sa-ui .health-check-accordion,
+.sa-ui .privacy-settings-accordion,
+.sa-ui .site-health-issues-wrapper .health-check-accordion,
+.sa-ui .wp-filter,
+.sa-ui .plugin-card,
+.sa-ui .import-php .wrap table.importers,
+.sa-ui #poststuff #post-body.columns-2 #side-sortables .postbox {
+	background: var(--sa-base);
+	color: var(--sa-text);
+	border: 1px solid var(--sa-line);
+	border-radius: var(--sa-radius-lg);
+	box-shadow: none;
+}
+
+.sa-ui .welcome-panel { overflow: hidden; }
+.sa-ui .welcome-panel .welcome-panel-header h2,
+.sa-ui .welcome-panel .welcome-panel-header p,
+.sa-ui .welcome-panel .welcome-panel-header a,
+.sa-ui .welcome-panel .welcome-panel-close { color: #fff; }
+.sa-ui .welcome-panel .welcome-panel-column-container { background: var(--sa-base); border: 0; }
+.sa-ui .welcome-panel .welcome-panel-column p { color: var(--sa-text); }
+.sa-ui .welcome-panel .welcome-panel-column h3 { color: var(--sa-strong); font-weight: 600; }
+
+.sa-ui .postbox .inside,
+.sa-ui .stuffbox .inside { color: var(--sa-text); }
+
+.sa-ui .postbox-header,
+.sa-ui .postbox .hndle,
+.sa-ui .stuffbox .hndle { border-bottom: 1px solid var(--sa-hairline); }
+
+.sa-ui .postbox.closed .postbox-header { border-bottom: 0; }
+
+.sa-ui .postbox-header .hndle,
+.sa-ui .postbox .hndle,
+.sa-ui #poststuff h2,
+.sa-ui .metabox-holder h2.hndle {
+	color: var(--sa-strong);
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.sa-ui .postbox .handle-order-higher,
+.sa-ui .postbox .handle-order-lower,
+.sa-ui .postbox .handlediv,
+.sa-ui .postbox .handle-actions button { color: var(--sa-subtle); }
+
+.sa-ui .postbox .handle-actions button:hover { color: var(--sa-strong); }
+
+.sa-ui .metabox-holder .postbox-container .empty-container,
+.sa-ui #dashboard-widgets .postbox-container .empty-container {
+	border: 1px dashed var(--sa-border);
+	border-radius: var(--sa-radius-lg);
+	outline: 0;
+}
+
+.sa-ui .metabox-holder .postbox-container .empty-container::after { color: var(--sa-subtle); }
+
+.sa-ui #major-publishing-actions,
+.sa-ui .submitbox .major-publishing-actions,
+.sa-ui #dashboard_quick_press .drafts,
+.sa-ui .plugin-card-bottom,
+.sa-ui #activity-widget #the-comment-list .comment-item,
+.sa-ui .community-events-footer,
+.sa-ui #dashboard_right_now .sub,
+.sa-ui #dashboard-widgets .postbox .sub {
+	background: var(--sa-chrome);
+	border-color: var(--sa-hairline);
+	color: var(--sa-subtle);
+}
+
+.sa-ui #major-publishing-actions,
+.sa-ui .plugin-card-bottom { border-radius: 0 0 var(--sa-radius-lg) var(--sa-radius-lg); }
+
+.sa-ui #dashboard_right_now li a::before,
+.sa-ui #dashboard_right_now li span::before,
+.sa-ui #activity-widget #the-comment-list .comment-item .avatar { color: var(--sa-subtle); }
+
+.sa-ui #activity-widget #the-comment-list .avatar,
+.sa-ui .avatar { border-radius: 50%; }
+
+.sa-ui #dashboard-widgets h3,
+.sa-ui #dashboard-widgets h4,
+.sa-ui #dashboard_quick_press .drafts h2 { color: var(--sa-strong); }
+
+.sa-ui #dashboard-widgets .postbox-container .postbox,
+.sa-ui #dashboard-widgets .meta-box-sortables { margin-bottom: 20px; }
+
+.sa-ui #screen-meta { margin: 0 var(--sa-gutter-end) -1px 0; border-top: 0; border-radius: 0 0 var(--sa-radius-lg) var(--sa-radius-lg); }
+
+.sa-ui #screen-meta-links .show-settings {
+	min-height: 30px;
+	line-height: 28px;
+	padding: 0 6px 0 12px;
+	border: 1px solid var(--sa-line);
+	border-top: 0;
+	border-radius: 0 0 var(--sa-radius) var(--sa-radius);
+	background: var(--sa-base);
+	color: var(--sa-subtle);
+	font-size: 13px;
+	font-weight: 500;
+	box-shadow: none;
+}
+
+.sa-ui #screen-meta-links .show-settings:hover,
+.sa-ui #screen-meta-links .show-settings:active,
+.sa-ui #screen-meta-links .show-settings:focus { color: var(--sa-strong); background: var(--sa-base); }
+
+.sa-ui #screen-meta-links { margin-inline-end: var(--sa-gutter-end); }
+
+.sa-ui .contextual-help-tabs .active,
+.sa-ui .contextual-help-tabs .active a {
+	background: var(--sa-tint);
+	border-color: var(--sa-accent);
+	color: var(--sa-strong);
+}
+
+.sa-ui .contextual-help-back,
+.sa-ui #contextual-help-back { background: var(--sa-chrome); border-color: var(--sa-hairline); }
+
+/* Tables */
+.sa-ui .widefat,
+.sa-ui table.wp-list-table {
+	background: var(--sa-base);
+	color: var(--sa-text);
+	border: 1px solid var(--sa-line);
+	border-radius: var(--sa-radius-lg);
+	border-spacing: 0;
+	border-collapse: separate;
+	box-shadow: none;
+	overflow: hidden;
+}
+
+.sa-ui .widefat td,
+.sa-ui .widefat th {
+	color: var(--sa-text);
+	font-size: 14px;
+	padding: 11px 12px;
+}
+
+.sa-ui .widefat thead td,
+.sa-ui .widefat thead th,
+.sa-ui .widefat tfoot td,
+.sa-ui .widefat tfoot th {
+	color: var(--sa-subtle);
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 1.4;
+	background: var(--sa-chrome);
+	border-color: var(--sa-hairline);
+}
+
+.sa-ui .widefat thead th a,
+.sa-ui .widefat tfoot th a,
+.sa-ui .widefat thead th.sortable a,
+.sa-ui .widefat thead th.sorted a { color: var(--sa-subtle); padding: 0; }
+
+.sa-ui .widefat thead th a:hover,
+.sa-ui .widefat thead th.sorted a { color: var(--sa-strong); }
+
+.sa-ui .widefat thead th.sortable,
+.sa-ui .widefat thead th.sorted,
+.sa-ui .widefat tfoot th.sortable,
+.sa-ui .widefat tfoot th.sorted { padding: 11px 12px; }
+
+.sa-ui .widefat .check-column { padding: 11px 0 0 12px; width: 2.4em; }
+.sa-ui .widefat thead .check-column,
+.sa-ui .widefat tfoot .check-column { padding: 10px 0 0 12px; }
+.sa-ui .widefat tbody th.check-column { padding: 12px 0 0 12px; }
+.sa-ui .widefat .check-column input { margin: 0; }
+
+.sa-ui .widefat tbody tr > td,
+.sa-ui .widefat tbody tr > th { border-top: 1px solid var(--sa-hairline); box-shadow: none; }
+.sa-ui .widefat tbody tr:first-child > td,
+.sa-ui .widefat tbody tr:first-child > th { border-top: 0; }
+
+.sa-ui .alternate,
+.sa-ui .striped > tbody > :nth-child(odd),
+.sa-ui ul.striped > :nth-child(odd) { background-color: transparent; }
+
+.sa-ui .wp-list-table tbody tr:hover,
+.sa-ui .widefat.striped > tbody > tr:hover { background-color: var(--sa-chrome); }
+
+.sa-ui .wp-list-table .row-title,
+.sa-ui .wp-list-table td.column-primary strong,
+.sa-ui .wp-list-table .plugin-title strong {
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--sa-strong);
+}
+
+.sa-ui .wp-list-table a.row-title { color: var(--sa-strong); }
+.sa-ui .wp-list-table a.row-title:hover { color: var(--sa-accent); }
+
+.sa-ui .row-actions { color: var(--sa-faint); font-size: 13px; padding-top: 3px; }
+.sa-ui .post-state,
+.sa-ui .wp-list-table .post-state {
+	display: inline-block;
+	padding: 1px 8px;
+	border-radius: 999px;
+	background: var(--sa-tint);
+	color: var(--sa-subtle);
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 18px;
+	vertical-align: 1px;
+}
+
+/* Only the states that need attention get colour. Published stays plain. */
+.sa-ui tr.status-draft .post-state { background: var(--sa-tint); color: var(--sa-text); }
+.sa-ui tr.status-pending .post-state { background: var(--sa-warning-tint); color: var(--sa-warning); }
+.sa-ui tr.status-future .post-state { background: var(--sa-info-tint); color: var(--sa-info); }
+.sa-ui tr.status-private .post-state { background: var(--sa-purple-tint); color: var(--sa-purple); }
+.sa-ui tr.status-trash .post-state { background: var(--sa-danger-tint); color: var(--sa-danger); }
+
+.sa-ui tr.status-draft a.row-title,
+.sa-ui tr.status-trash a.row-title { color: var(--sa-text); }
+
+.sa-ui .wp-list-table tr.inline-edit-row td,
+.sa-ui .wp-list-table .inline-edit-row fieldset label span.title { color: var(--sa-text); }
+.sa-ui tr.inline-edit-row td,
+.sa-ui #replyrow td { background: var(--sa-chrome); }
+
+.sa-ui .tablenav { height: auto; min-height: 36px; margin: 10px 0; padding: 0; }
+.sa-ui .tablenav .actions { padding: 0 10px 0 0; }
+.sa-ui .tablenav .tablenav-pages { margin: 0; line-height: 36px; }
+.sa-ui .tablenav .displaying-num,
+.sa-ui .tablenav .tablenav-paging-text { color: var(--sa-subtle); font-size: 13px; }
+.sa-ui .tablenav .tablenav-pages .button,
+.sa-ui .tablenav .tablenav-pages .tablenav-pages-navspan {
+	min-width: 36px;
+	padding: 0 8px;
+	font-size: 16px;
+}
+.sa-ui .tablenav .tablenav-pages .current-page { min-height: 36px; padding: 0; text-align: center; }
+.sa-ui p.search-box { margin: 0 0 4px; }
+.sa-ui p.search-box input[name="s"] { margin-inline-end: 6px; }
+
+/* Status filters as a segmented control. The font-size trick hides the
+   "|" separators core prints between links. */
+.sa-ui .subsubsub {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 2px;
+	float: left;
+	margin: 0 12px 12px 0;
+	padding: 3px;
+	background: var(--sa-tint);
+	border-radius: var(--sa-radius);
+	font-size: 0;
+	color: transparent;
+}
+
+.sa-ui .subsubsub li { margin: 0; font-size: 0; line-height: 0; }
+
+.sa-ui .subsubsub a {
+	display: inline-block;
+	padding: 5px 10px;
+	border-radius: 6px;
+	color: var(--sa-subtle);
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 1.4;
+	text-decoration: none;
+}
+
+.sa-ui .subsubsub a:hover { color: var(--sa-strong); }
+
+.sa-ui .subsubsub a.current {
+	background: var(--sa-raised);
+	color: var(--sa-strong);
+	font-weight: 500;
+	box-shadow: 0 0 0 1px var(--sa-line), 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.sa-ui .subsubsub a .count,
+.sa-ui .subsubsub a.current .count { color: var(--sa-subtle); font-weight: 400; }
+
+.rtl.sa-ui .subsubsub { float: right; margin: 0 0 12px 12px; }
+
+/* Notices */
+.sa-ui .notice,
+.sa-ui div.updated,
+.sa-ui div.error,
+.sa-ui .update-nag,
+.sa-ui .update-message,
+.sa-ui #update-nag {
+	background: var(--sa-info-tint);
+	color: var(--sa-text);
+	border: 1px solid color-mix(in oklab, var(--sa-info) 28%, transparent);
+	border-radius: var(--sa-radius);
+	box-shadow: none;
+	padding: 3px 14px;
+}
+
+.sa-ui .notice p,
+.sa-ui div.updated p,
+.sa-ui div.error p,
+.sa-ui .update-nag {
+	font-size: 14px;
+	color: var(--sa-text);
+}
+.sa-ui .notice strong,
+.sa-ui div.updated strong,
+.sa-ui div.error strong { color: var(--sa-strong); }
+
+.sa-ui .notice-success,
+.sa-ui div.updated,
+.sa-ui .notice.updated {
+	background: var(--sa-success-tint);
+	border-color: color-mix(in oklab, var(--sa-success) 30%, transparent);
+}
+
+.sa-ui .notice-warning,
+.sa-ui .update-nag,
+.sa-ui .notice.notice-alt.notice-warning,
+.sa-ui .plugin-update-tr .update-message.notice-warning {
+	background: var(--sa-warning-tint);
+	border-color: color-mix(in oklab, var(--sa-warning) 32%, transparent);
+}
+
+.sa-ui .notice-error,
+.sa-ui div.error {
+	background: var(--sa-danger-tint);
+	border-color: color-mix(in oklab, var(--sa-danger) 30%, transparent);
+}
+
+.sa-ui .notice-dismiss::before { color: var(--sa-subtle); }
+.sa-ui .notice-dismiss:hover::before,
+.sa-ui .notice-dismiss:focus::before { color: var(--sa-strong); }
+
+/* Tabs */
+.sa-ui .nav-tab-wrapper,
+.sa-ui .wrap h2.nav-tab-wrapper,
+.sa-ui h1.nav-tab-wrapper {
+	border-bottom: 1px solid var(--sa-line);
+	padding: 0;
+	margin-bottom: 18px;
+}
+
+.sa-ui .nav-tab {
+	margin: 0 20px -1px 0;
+	padding: 8px 2px 10px;
+	border: 0;
+	border-bottom: 2px solid transparent;
+	background: transparent;
+	color: var(--sa-subtle);
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 1.4;
+}
+
+.sa-ui .nav-tab:hover,
+.sa-ui .nav-tab:focus {
+	background: transparent;
+	color: var(--sa-strong);
+	box-shadow: none;
+}
+
+.sa-ui .nav-tab-active,
+.sa-ui .nav-tab-active:hover,
+.sa-ui .nav-tab-active:focus,
+.sa-ui .nav-tab-active:focus:active {
+	background: transparent;
+	color: var(--sa-strong);
+	border-bottom-color: var(--sa-accent);
+}
+
+/* 5. Screen-specific touches ------------------------------------------------ */
+
+/* Plugins: one calm list. Active rows are plain, inactive rows are muted. */
+.sa-ui .plugins tr,
+.sa-ui .plugins .active td,
+.sa-ui .plugins .active th,
+.sa-ui .plugins tr.active + tr.plugin-update-tr .plugin-update { background: transparent; }
+
+.sa-ui .plugins .inactive td,
+.sa-ui .plugins .inactive th,
+.sa-ui .plugins tr.inactive + tr.plugin-update-tr .plugin-update { background: transparent; }
+
+/* Status dot before the name, for the exceptions only: hollow grey when
+   inactive, amber when an update is waiting, red when paused. */
+.sa-ui .plugins tr.inactive .plugin-title strong::before,
+.sa-ui .plugins tr.update .plugin-title strong::before,
+.sa-ui .plugins tr.paused .plugin-title strong::before {
+	content: "";
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	margin-inline-end: 8px;
+	border-radius: 50%;
+	vertical-align: 1px;
+	box-sizing: border-box;
+}
+
+.sa-ui .plugins tr.inactive .plugin-title strong::before { border: 1.5px solid var(--sa-faint); }
+.sa-ui .plugins tr.update .plugin-title strong::before { border: 0; background: var(--sa-warning-solid); }
+.sa-ui .plugins tr.paused .plugin-title strong::before { border: 0; background: var(--sa-danger-solid); }
+
+.sa-ui table.plugins tr.update > td,
+.sa-ui table.plugins tr.update > th,
+.sa-ui table.plugins tr.update + tr.plugin-update-tr .plugin-update { background: color-mix(in oklab, var(--sa-warning-tint) 55%, transparent); }
+
+/* Core draws its own row lines with inset shadows and tinted borders. */
+.sa-ui table.plugins tr,
+.sa-ui table.plugins tbody tr > td,
+.sa-ui table.plugins tbody tr > th,
+.sa-ui table.plugins tr.active + tr.inactive td,
+.sa-ui table.plugins tr.active + tr.inactive th,
+.sa-ui table.plugins tr.active.plugin-update-tr + tr.inactive td,
+.sa-ui table.plugins tr.active.plugin-update-tr + tr.inactive th,
+.sa-ui table.plugins tr.active + tr.inactive td.check-column,
+.sa-ui table.plugins tr.active + tr.inactive td.column-description,
+.sa-ui table.plugins tr.active + tr.inactive th.check-column,
+.sa-ui table.plugins .plugin-update-tr .plugin-update {
+	box-shadow: none;
+	border-top: 1px solid var(--sa-hairline);
+}
+
+.sa-ui table.plugins tbody tr:first-child > td,
+.sa-ui table.plugins tbody tr:first-child > th,
+.sa-ui table.plugins tr.plugin-update-tr > td,
+.sa-ui table.plugins .plugin-update-tr .plugin-update { border-top: 0; }
+
+.sa-ui table.plugins tr.paused > .check-column,
+.sa-ui table.plugins tr.active > .check-column,
+.sa-ui table.plugins tr.inactive > .check-column,
+.sa-ui table.plugins tr.active th.check-column,
+.sa-ui table.plugins tr.inactive th.check-column,
+.sa-ui table.plugins tr.plugin-update-tr.active td {
+	border-left: 0;
+	padding-left: 12px;
+}
+
+.sa-ui .plugins .plugin-title strong { font-weight: 600; }
+.sa-ui .plugins .inactive .plugin-title strong { font-weight: 500; color: var(--sa-subtle); }
+.sa-ui .plugins .plugin-description,
+.sa-ui .plugins .plugin-description p,
+.sa-ui .plugins .column-description,
+.sa-ui .plugins .desc,
+.sa-ui .plugins .desc p,
+.sa-ui .plugins .plugin-version-author-uri { color: var(--sa-text); }
+.sa-ui .plugins .inactive .plugin-description p,
+.sa-ui .plugins .inactive .plugin-version-author-uri { color: var(--sa-subtle); }
+.sa-ui .plugins .plugin-update-tr .update-message { margin: 0 12px 12px 44px; }
+
+.sa-ui .plugin-card { overflow: hidden; }
+.sa-ui .plugin-card .name,
+.sa-ui .plugin-card h3 { color: var(--sa-strong); }
+.sa-ui .plugin-card .desc,
+.sa-ui .plugin-card .column-compatibility,
+.sa-ui .plugin-card .column-updated { color: var(--sa-subtle); }
+
+.sa-ui .wp-filter { padding: 0 14px; margin: 16px 0 20px; }
+.sa-ui .wp-filter .filter-links li > a { color: var(--sa-subtle); font-weight: 500; }
+.sa-ui .wp-filter .filter-links li > a:hover { color: var(--sa-strong); }
+.sa-ui .wp-filter .filter-links .current {
+	color: var(--sa-strong);
+	border-bottom-color: var(--sa-accent);
+	box-shadow: none;
+}
+.sa-ui .wp-filter .drawer-toggle::before,
+.sa-ui .wp-filter .filter-count .count { color: var(--sa-subtle); }
+
+/* Themes */
+.sa-ui .theme-browser .theme {
+	border: 1px solid var(--sa-line);
+	border-radius: var(--sa-radius-lg);
+	box-shadow: none;
+	overflow: hidden;
+	background: var(--sa-base);
+}
+.sa-ui .theme-browser .theme .theme-name,
+.sa-ui .theme-browser .theme .theme-id-container {
+	background: var(--sa-base);
+	color: var(--sa-strong);
+	box-shadow: inset 0 1px 0 var(--sa-hairline);
+	font-weight: 600;
+}
+.sa-ui .theme-browser .theme.active .theme-name,
+.sa-ui .theme-browser .theme.active .theme-id-container {
+	background: var(--sa-strong);
+	color: var(--sa-base);
+	box-shadow: none;
+}
+.sa-ui .theme-browser .theme.add-new-theme a::after { background: var(--sa-tint); color: var(--sa-subtle); }
+.sa-ui .theme-browser .theme.add-new-theme a { background: var(--sa-base); }
+.sa-ui .theme-count,
+.sa-ui .title-count {
+	background: var(--sa-fill);
+	color: var(--sa-strong);
+	border-radius: 999px;
+	font-weight: 500;
+}
+
+/* Media library */
+.sa-ui .media-frame.mode-grid .media-toolbar,
+.sa-ui .media-frame.mode-grid .media-toolbar select { box-shadow: none; }
+.sa-ui .attachment-preview { background: var(--sa-tint); box-shadow: inset 0 0 0 1px var(--sa-line); border-radius: 6px; overflow: hidden; }
+.sa-ui .attachment.details,
+.sa-ui .wp-core-ui .attachment.details { box-shadow: inset 0 0 0 3px var(--sa-base), inset 0 0 0 6px var(--sa-accent); }
+.sa-ui .upload-ui,
+.sa-ui .uploader-inline-content .upload-ui,
+.sa-ui #drag-drop-area,
+.sa-ui .drag-drop #drag-drop-area {
+	border-color: var(--sa-border);
+	border-radius: var(--sa-radius-lg);
+}
+
+/* Comments */
+.sa-ui #the-comment-list .unapproved td,
+.sa-ui #the-comment-list .unapproved th { background: var(--sa-warning-tint); }
+.sa-ui #the-comment-list .unapproved th.check-column,
+.sa-ui #the-comment-list .unapproved td.check-column { border-left: 0; padding-left: 12px; }
+.sa-ui #activity-widget #the-comment-list .unapproved::before { display: none; }
+
+/* Classic editor and tag forms */
+.sa-ui #titlediv #title {
+	min-height: 44px;
+	font-size: 18px;
+	font-weight: 500;
+	padding: 4px 12px;
+}
+.sa-ui #edit-slug-box,
+.sa-ui #post-status-info { color: var(--sa-subtle); }
+.sa-ui #post-status-info,
+.sa-ui .wp-editor-container,
+.sa-ui .categorydiv div.tabs-panel,
+.sa-ui .customlinkdiv div.tabs-panel,
+.sa-ui .posttypediv div.tabs-panel,
+.sa-ui .taxonomydiv div.tabs-panel,
+.sa-ui .wp-tab-panel {
+	border-color: var(--sa-line);
+	background: var(--sa-base);
+}
+.sa-ui .wp-editor-container { border-radius: var(--sa-radius); overflow: hidden; box-shadow: none; }
+.sa-ui .categorydiv div.tabs-panel,
+.sa-ui .wp-tab-panel { border-radius: 0 var(--sa-radius) var(--sa-radius) var(--sa-radius); }
+.sa-ui .tagchecklist .ntdelbutton .remove-tag-icon::before { color: var(--sa-subtle); }
+.sa-ui .misc-pub-section,
+.sa-ui #minor-publishing-actions { color: var(--sa-text); }
+.sa-ui #misc-publishing-actions label[for="post_status"]::before,
+.sa-ui #post-body #visibility::before,
+.sa-ui .curtime #timestamp::before,
+.sa-ui #post-body .misc-pub-post-status::before,
+.sa-ui #post-body .misc-pub-revisions::before { color: var(--sa-subtle); }
+.sa-ui .form-wrap p,
+.sa-ui p.description { color: var(--sa-subtle); }
+
+/* Site health, updates, tools */
+.sa-ui .health-check-header,
+.sa-ui .privacy-settings-header { background: var(--sa-base); border-bottom: 1px solid var(--sa-line); }
+.sa-ui .health-check-tabs-wrapper .health-check-tab.active,
+.sa-ui .privacy-settings-tabs-wrapper .privacy-settings-tab.active { box-shadow: inset 0 -2px var(--sa-accent); }
+.sa-ui .health-check-accordion-trigger,
+.sa-ui .privacy-settings-accordion-trigger { background: var(--sa-base); color: var(--sa-strong); }
+.sa-ui .health-check-accordion-trigger:hover,
+.sa-ui .privacy-settings-accordion-trigger:hover { background: var(--sa-chrome); }
+.sa-ui .health-check-accordion-heading,
+.sa-ui .privacy-settings-accordion-heading { border-color: var(--sa-hairline); }
+.sa-ui .health-check-accordion-panel { background: var(--sa-base); }
+
+/* Pointers and modals */
+.sa-ui .wp-pointer-content {
+	background: var(--sa-base);
+	border: 1px solid var(--sa-line);
+	border-radius: var(--sa-radius-lg);
+	box-shadow: var(--sa-pop);
+	overflow: hidden;
+}
+.sa-ui .wp-pointer-content h3 { background: var(--sa-accent); border-color: var(--sa-accent); color: var(--sa-on-accent); }
+.sa-ui .wp-pointer-content h3::before { color: var(--sa-accent); background: var(--sa-on-accent); }
+
+/* Dashboard widgets: no zebra rows, and no empty drop zones unless a widget
+   is being dragged. */
+.sa-ui #future-posts li:nth-child(odd),
+.sa-ui #published-posts li:nth-child(odd) { background-color: transparent; }
+
+.sa-ui #future-posts li,
+.sa-ui #published-posts li { padding: 6px 12px; margin: 0; border-radius: 0; }
+.sa-ui #future-posts li + li,
+.sa-ui #published-posts li + li { border-top: 1px solid var(--sa-hairline); }
+.sa-ui #activity-widget #the-comment-list .unapproved { background-color: var(--sa-warning-tint); }
+.sa-ui .activity-block,
+.sa-ui #dashboard_activity .subsubsub,
+.sa-ui #activity-widget #the-comment-list .comment-item:first-child,
+.sa-ui .js #dashboard_quick_press .drafts,
+.sa-ui #dashboard_right_now .sub { border-color: var(--sa-hairline); }
+.sa-ui #dashboard_activity .subsubsub { display: flex; float: none; margin: 8px 0 4px; }
+.sa-ui #dashboard-widgets .postbox table.widefat { border: 0; border-radius: 0; }
+.sa-ui #dashboard-widgets .postbox table th { font-style: normal; }
+
+@media only screen and (min-width: 800px) {
+	.sa-ui #wpbody-content #dashboard-widgets {
+		display: flex;
+		align-items: flex-start;
+		gap: 20px;
+	}
+
+	.sa-ui #wpbody-content #dashboard-widgets .postbox-container {
+		float: none;
+		flex: 1 1 0;
+		width: auto;
+		min-width: 0;
+	}
+
+	.sa-ui:not(.is-dragging-metaboxes) #wpbody-content #dashboard-widgets .postbox-container:has(> .empty-container) { display: none; }
+
+	.sa-ui.is-dragging-metaboxes #wpbody-content #dashboard-widgets .postbox-container .empty-container {
+		display: block;
+		height: 250px;
+		min-height: 0;
+		margin: 0;
+		outline: 0;
+		border: 1px dashed var(--sa-border) !important;
+		border-radius: var(--sa-radius-lg);
+		background: var(--sa-chrome);
+	}
+
+	.sa-ui #dashboard-widgets .postbox-container .meta-box-sortables { margin: 0; min-height: 0; }
+	.sa-ui #dashboard-widgets-wrap { margin: 0; overflow: visible; }
+}
+
+/* 6. Colour with meaning ----------------------------------------------------- */
+
+/* Taxonomy links in list tables as soft chips. The font-size trick hides the
+   commas core prints between them. */
+.sa-ui .wp-list-table td.column-categories,
+.sa-ui .wp-list-table td.column-tags,
+.sa-ui .wp-list-table td[class*="column-taxonomy-"] { font-size: 0; line-height: 21px; }
+
+.sa-ui .wp-list-table td.column-categories > a,
+.sa-ui .wp-list-table td.column-tags > a,
+.sa-ui .wp-list-table td[class*="column-taxonomy-"] > a {
+	display: inline-block;
+	margin: 0 4px 4px 0;
+	padding: 1px 8px;
+	border-radius: 999px;
+	background: var(--sa-tint);
+	color: var(--sa-text);
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 18px;
+	text-decoration: none;
+}
+
+.sa-ui .wp-list-table td.column-categories > a:hover,
+.sa-ui .wp-list-table td.column-tags > a:hover,
+.sa-ui .wp-list-table td[class*="column-taxonomy-"] > a:hover {
+	background: var(--sa-accent-soft);
+	color: var(--sa-link);
+}
+
+.sa-ui .wp-list-table td.column-categories > span,
+.sa-ui .wp-list-table td.column-tags > span,
+.sa-ui .wp-list-table td[class*="column-taxonomy-"] > span { font-size: 14px; line-height: 21px; color: var(--sa-faint); }
+
+/* Filter counts that mean "waiting on someone". */
+.sa-ui .subsubsub .pending a .count,
+.sa-ui .subsubsub .moderated a .count { color: var(--sa-warning); font-weight: 600; }
+.sa-ui .subsubsub .trash a .count,
+.sa-ui .subsubsub .spam a .count { color: var(--sa-subtle); }
+
+/* Comment moderation actions */
+.sa-ui .row-actions .approve a,
+.sa-ui #the-comment-list .approve a { color: var(--sa-success); }
+.sa-ui .row-actions .unapprove a,
+.sa-ui #the-comment-list .unapprove a { color: var(--sa-warning); }
+.sa-ui .row-actions .approve a:hover,
+.sa-ui .row-actions .unapprove a:hover { color: var(--sa-strong); }
+.sa-ui .column-response .post-com-count-pending,
+.sa-ui .column-comments .post-com-count-pending {
+	background: var(--sa-warning-solid);
+	color: #1a1205;
+}
+.sa-ui .column-response .post-com-count-approved .comment-count-approved,
+.sa-ui .column-comments .post-com-count-approved .comment-count-approved { background: var(--sa-fill); color: var(--sa-strong); }
+.sa-ui .column-response .post-com-count-approved::after,
+.sa-ui .column-comments .post-com-count-approved::after { border-top-color: var(--sa-fill); }
+
+/* Destructive actions */
+.sa-ui.wp-core-ui .button.delete,
+.sa-ui.wp-core-ui .button.button-link-delete,
+.sa-ui.wp-core-ui .button.action.delete {
+	color: var(--sa-danger);
+	border-color: color-mix(in oklab, var(--sa-danger) 40%, transparent);
+}
+.sa-ui.wp-core-ui .button.delete:hover,
+.sa-ui.wp-core-ui .button.button-link-delete:hover {
+	color: var(--sa-danger);
+	background: var(--sa-danger-tint);
+	border-color: color-mix(in oklab, var(--sa-danger) 55%, transparent);
+}
+.sa-ui .row-actions span.delete a:hover,
+.sa-ui .row-actions span.trash a:hover,
+.sa-ui .row-actions span.spam a:hover,
+.sa-ui .submitdelete:hover { color: var(--sa-danger-solid); }
+
+/* Dashboard: At a Glance icons */
+.sa-ui #dashboard_right_now li.post-count a::before { color: var(--sa-accent); }
+.sa-ui #dashboard_right_now li.page-count a::before { color: var(--sa-purple-solid); }
+.sa-ui #dashboard_right_now li.comment-count a::before { color: var(--sa-success-solid); }
+.sa-ui #dashboard_right_now li.comment-mod-count a::before { color: var(--sa-warning-solid); }
+
+/* Toolbar signals */
+.sa #wpadminbar #wp-admin-bar-updates .ab-icon::before,
+.sa #wpadminbar #wp-admin-bar-updates .ab-label { color: var(--sa-warning); }
+.sa #wpadminbar #wp-admin-bar-comments .awaiting-mod:not(.count-0) { color: var(--sa-link); font-weight: 600; }
+
+/* Site Health and password strength */
+.sa-ui .site-health-progress-wrapper.green .site-health-progress svg circle:last-child { stroke: var(--sa-success-solid); }
+.sa-ui .site-health-progress-wrapper.orange .site-health-progress svg circle:last-child { stroke: var(--sa-warning-solid); }
+.sa-ui .site-health-progress-wrapper.red .site-health-progress svg circle:last-child { stroke: var(--sa-danger-solid); }
+.sa-ui .health-check-accordion-trigger .badge.green,
+.sa-ui .health-check-accordion-trigger .badge.blue,
+.sa-ui .health-check-accordion-trigger .badge.orange,
+.sa-ui .health-check-accordion-trigger .badge.red,
+.sa-ui .health-check-accordion-trigger .badge.purple,
+.sa-ui .health-check-accordion-trigger .badge.gray {
+	border: 0;
+	border-radius: 999px;
+	padding: 2px 9px;
+	font-weight: 500;
+}
+.sa-ui .health-check-accordion-trigger .badge.green { background: var(--sa-success-tint); color: var(--sa-success); }
+.sa-ui .health-check-accordion-trigger .badge.blue { background: var(--sa-info-tint); color: var(--sa-info); }
+.sa-ui .health-check-accordion-trigger .badge.orange { background: var(--sa-warning-tint); color: var(--sa-warning); }
+.sa-ui .health-check-accordion-trigger .badge.red { background: var(--sa-danger-tint); color: var(--sa-danger); }
+.sa-ui .health-check-accordion-trigger .badge.purple { background: var(--sa-purple-tint); color: var(--sa-purple); }
+.sa-ui .health-check-accordion-trigger .badge.gray { background: var(--sa-tint); color: var(--sa-subtle); }
+
+/* Small screens: keep core spacing, only tone things. */
+@media screen and (max-width: 782px) {
+	:root { --sa-gutter-start: 10px; --sa-gutter-end: 12px; }
+	.sa-ui #screen-meta-links { display: none; }
+	.sa-ui.wp-core-ui .button,
+	.sa-ui.wp-core-ui .button-secondary { min-height: 40px; line-height: 38px; }
+	.sa-ui input[type="text"],
+	.sa-ui input[type="password"],
+	.sa-ui input[type="email"],
+	.sa-ui input[type="url"],
+	.sa-ui input[type="search"],
+	.sa-ui input[type="number"],
+	.sa-ui select { min-height: 40px; }
+	.sa-ui.wp-core-ui select { line-height: 38px; }
+	.sa-ui .widefat { border-radius: var(--sa-radius); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.sa * { transition: none !important; }
+}

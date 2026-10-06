@@ -1,0 +1,1095 @@
+/*
+ * Slate Admin: media. Loaded only where WordPress loads its media views
+ * (Media Library, uploader, and the "Add media" dialog in editors).
+ *
+ *   1. Library toolbar (grid and list)
+ *   2. Thumbnails
+ *   3. Dialogs: attachment details and the media picker
+ *   4. Uploader
+ *   5. List view and the edit screen
+ *
+ * Scoped to .sa so the dialog is also skinned inside the block editor, where
+ * the rest of the content skin is switched off.
+ */
+
+.sa .media-frame,
+.sa .media-modal,
+.sa .media-frame input,
+.sa .media-frame textarea,
+.sa .media-frame select,
+.sa .media-frame button { font-family: var(--sa-font); }
+
+/* 1. Library toolbar -------------------------------------------------------- */
+
+.sa .media-frame.mode-grid .media-toolbar.wp-filter,
+.sa.upload-php .wp-filter {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 12px;
+	height: auto;
+	margin: 0 0 16px;
+	padding: 0;
+	background: transparent;
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+}
+
+.sa .media-frame.mode-grid .media-toolbar-secondary,
+.sa.upload-php .wp-filter .filter-items {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	float: none;
+	height: auto;
+	max-width: none;
+	width: auto;
+	margin: 0;
+	padding: 0;
+}
+
+.sa .media-frame.mode-grid .media-toolbar-secondary > *,
+.sa.upload-php .wp-filter .filter-items > * { margin: 0; }
+
+.sa .media-frame.mode-grid .media-toolbar-primary,
+.sa.upload-php .wp-filter .search-form {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	float: none;
+	height: auto;
+	max-width: none;
+	width: auto;
+	margin: 0 0 0 auto;
+	padding: 0;
+}
+
+.sa .media-frame.mode-grid .media-search-input-label,
+.sa.upload-php .wp-filter .search-form label {
+	position: static;
+	margin: 0;
+	color: var(--sa-subtle);
+	font-size: 13px;
+	font-weight: 400;
+	white-space: nowrap;
+}
+
+.sa .media-frame.mode-grid .media-toolbar-primary input[type="search"],
+.sa.upload-php .wp-filter .search-form input[type="search"] {
+	width: 260px;
+	max-width: 100%;
+	margin: 0;
+}
+
+.sa .media-toolbar .attachment-filters,
+.sa.upload-php .wp-filter select {
+	width: auto;
+	max-width: 100%;
+	height: auto;
+	margin: 0;
+}
+
+.sa .media-frame.mode-grid .media-toolbar .spinner { margin: 0 4px; }
+.sa .media-frame.mode-grid .media-toolbar .media-button { margin: 0; }
+
+/* Grid / list switch as a small segmented control */
+.sa .wp-filter .view-switch {
+	display: inline-flex;
+	gap: 2px;
+	height: auto;
+	margin: 0;
+	padding: 3px;
+	background: var(--sa-tint);
+	border-radius: var(--sa-radius);
+}
+
+.sa .wp-filter .view-switch a {
+	float: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 30px;
+	height: 30px;
+	padding: 0;
+	border-radius: 6px;
+	line-height: 1;
+}
+
+.sa .wp-filter .view-switch a::before {
+	color: var(--sa-subtle);
+	font-size: 18px;
+	line-height: 1;
+}
+
+.sa .wp-filter .view-switch a:hover::before { color: var(--sa-strong); }
+
+.sa .wp-filter .view-switch a.current {
+	background: var(--sa-raised);
+	box-shadow: 0 0 0 1px var(--sa-line), 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.sa .wp-filter .view-switch a.current::before { color: var(--sa-strong); }
+
+/* Bulk select state */
+.sa.wp-core-ui .media-toolbar .button.delete-selected-button,
+.sa .wp-core-ui .media-toolbar .button.delete-selected-button,
+.sa.wp-core-ui .media-toolbar .button.button-primary.delete-selected-button {
+	background: var(--sa-control);
+	color: var(--sa-danger);
+	border: 1px solid color-mix(in oklab, var(--sa-danger) 40%, transparent);
+}
+
+.sa .wp-core-ui .media-toolbar .button.delete-selected-button:hover,
+.sa.wp-core-ui .media-toolbar .button.delete-selected-button:hover {
+	background: var(--sa-danger-tint);
+	color: var(--sa-danger);
+}
+
+.sa .wp-core-ui .media-toolbar .button.delete-selected-button[disabled],
+.sa.wp-core-ui .media-toolbar .button.delete-selected-button[disabled] { border-color: var(--sa-hairline); }
+
+/* Load more */
+.sa .media-frame .load-more-wrapper { padding: 16px 0 8px; }
+.sa .media-frame .load-more-count { color: var(--sa-subtle); font-size: 13px; }
+.sa .media-frame .no-media,
+.sa .media-frame p.no-media {
+	color: var(--sa-subtle);
+	font-size: 15px;
+}
+
+/* 2. Thumbnails ------------------------------------------------------------- */
+
+.sa .media-frame.mode-grid .attachments-browser .attachments,
+.sa .media-frame.mode-grid .uploader-inline-content { padding: 0; }
+
+.sa .media-frame.mode-grid .attachments { margin: 0 -6px; }
+
+.sa .attachment { padding: 6px; }
+
+.sa .attachment-preview,
+.sa .wp-core-ui .attachment-preview {
+	background: var(--sa-tint);
+	border-radius: var(--sa-radius);
+	box-shadow: none;
+	overflow: hidden;
+	cursor: pointer;
+}
+
+.sa .attachment .thumbnail::after,
+.sa .wp-core-ui .attachment .thumbnail::after {
+	border-radius: var(--sa-radius);
+	box-shadow: inset 0 0 0 1px var(--sa-line);
+}
+
+.sa .attachment .portrait img,
+.sa .attachment .landscape img { transition: transform 0.18s ease; }
+.sa .attachment:hover .thumbnail::after { box-shadow: inset 0 0 0 1px var(--sa-border); }
+
+/* Caption strip. WordPress 7 prints image titles through ::after, and file
+   names for documents through .filename; both get the same strip. */
+.sa .wp-core-ui .attachment:not(:has(.filename))::after,
+.sa.wp-core-ui .attachment:not(:has(.filename))::after {
+	bottom: 6px;
+	left: 6px;
+	width: calc(100% - 12px);
+	max-height: none;
+	padding: 6px 10px;
+	background: var(--sa-base);
+	color: var(--sa-text);
+	border-radius: 0 0 var(--sa-radius) var(--sa-radius);
+	box-shadow: inset 0 0 0 1px var(--sa-line);
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 18px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	pointer-events: none;
+}
+
+.sa .attachment .filename,
+.sa .wp-core-ui .attachment .filename,
+.sa.wp-core-ui .attachment .filename {
+	max-height: none;
+	background: var(--sa-base);
+	color: var(--sa-text);
+	border-radius: 0 0 var(--sa-radius) var(--sa-radius);
+	box-shadow: inset 0 0 0 1px var(--sa-line);
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 18px;
+	text-align: start;
+}
+
+.sa .wp-core-ui .attachment .filename div,
+.sa.wp-core-ui .attachment .filename div {
+	padding: 6px 10px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* Documents: quiet icon on a soft tile */
+.sa .attachment .thumbnail .icon,
+.sa .attachment-preview .thumbnail img.icon { opacity: 0.55; }
+
+.sa .attachment .type-application .thumbnail,
+.sa .attachment .type-text .thumbnail,
+.sa .attachment .type-audio .thumbnail,
+.sa .attachment .type-video .thumbnail { background: var(--sa-chrome); }
+
+/* Focus, open and selected */
+.sa .wp-core-ui .attachment:focus,
+.sa.wp-core-ui .attachment:focus,
+.sa .wp-core-ui .selected.attachment:focus,
+.sa .wp-core-ui .attachment.details:focus {
+	box-shadow: none;
+	outline: 2px solid transparent;
+}
+
+.sa .wp-core-ui .attachment:focus .attachment-preview,
+.sa.wp-core-ui .attachment:focus .attachment-preview { box-shadow: 0 0 0 2px var(--sa-base), 0 0 0 4px var(--sa-accent); }
+
+.sa .wp-core-ui .attachment.selected,
+.sa.wp-core-ui .attachment.selected,
+.sa .wp-core-ui .attachment.details,
+.sa.wp-core-ui .attachment.details { box-shadow: none; }
+
+.sa .wp-core-ui .attachment.selected .attachment-preview,
+.sa.wp-core-ui .attachment.selected .attachment-preview,
+.sa .wp-core-ui .attachment.details .attachment-preview,
+.sa.wp-core-ui .attachment.details .attachment-preview { box-shadow: 0 0 0 2px var(--sa-base), 0 0 0 4px var(--sa-accent); }
+
+/* Selection tick */
+.sa .wp-core-ui .attachment .check,
+.sa.wp-core-ui .attachment .check {
+	top: 12px;
+	right: 12px;
+	width: 22px;
+	height: 22px;
+	margin: 0;
+	padding: 0;
+	background: var(--sa-base);
+	border: 0;
+	border-radius: 50%;
+	box-shadow: 0 0 0 1.5px var(--sa-border), 0 1px 3px rgba(0, 0, 0, 0.18);
+	outline: 0;
+}
+
+.sa .wp-core-ui .attachment.selected .check,
+.sa.wp-core-ui .attachment.selected .check,
+.sa .wp-core-ui .attachment.details .check,
+.sa.wp-core-ui .attachment.details .check,
+.sa .wp-core-ui .media-frame.mode-grid .attachment.selected .check {
+	display: block;
+	background: var(--sa-accent);
+	box-shadow: 0 0 0 2px var(--sa-base), 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.sa .wp-core-ui .attachment .check .media-modal-icon,
+.sa.wp-core-ui .attachment .check .media-modal-icon {
+	display: block;
+	width: 22px;
+	height: 22px;
+	margin: 0;
+	background: var(--sa-on-accent);
+	-webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6.5 11.4 3 3 6-6.6'/%3E%3C/svg%3E") center / contain no-repeat;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6.5 11.4 3 3 6-6.6'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.sa .wp-core-ui .attachment:not(.selected):not(.details) .check .media-modal-icon { background: transparent; }
+
+/* Hovering a ticked item offers "remove": show a minus. */
+.sa .wp-core-ui .attachment.selected .check:hover .media-modal-icon,
+.sa .wp-core-ui .attachment.selected .check:focus .media-modal-icon {
+	-webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='M7 11h8'/%3E%3C/svg%3E");
+	mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22' fill='none' stroke='%23000' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='M7 11h8'/%3E%3C/svg%3E");
+}
+
+/* Upload in progress */
+.sa .media-progress-bar {
+	height: 6px;
+	border: 0;
+	border-radius: 999px;
+	background: var(--sa-fill);
+	box-shadow: none;
+	overflow: hidden;
+}
+
+.sa .media-progress-bar div {
+	height: 6px;
+	border-radius: 999px;
+	background: var(--sa-accent);
+}
+
+.sa .attachment-preview .media-progress-bar { left: 14%; right: 14%; width: auto; margin: 0; }
+
+/* 3. Dialogs ---------------------------------------------------------------- */
+
+.sa .media-modal-backdrop,
+.sa.media-modal-backdrop {
+	background: #0a0a0a;
+	opacity: 0.5;
+}
+
+.sa .media-modal { top: 40px; right: 40px; bottom: 40px; left: 40px; }
+
+.sa .media-modal-content {
+	background: var(--sa-base);
+	color: var(--sa-text);
+	border-radius: 14px;
+	box-shadow: 0 0 0 1px var(--sa-line), 0 24px 64px -12px rgba(0, 0, 0, 0.45);
+	overflow: hidden;
+}
+
+.sa .media-modal .media-frame-title,
+.sa .media-modal .media-frame-router,
+.sa .media-modal .media-frame-content,
+.sa .media-modal .media-frame-toolbar,
+.sa .media-modal .media-frame-menu,
+.sa .media-modal .media-menu { background: transparent; }
+
+.sa .media-modal .media-frame-title h1 {
+	padding: 0 20px;
+	color: var(--sa-strong);
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 52px;
+}
+
+.sa .media-modal .media-frame-title { height: 52px; box-shadow: none; }
+
+/* Close and previous / next */
+.sa .media-modal-close {
+	top: 9px;
+	right: 12px;
+	width: 34px;
+	height: 34px;
+	border-radius: var(--sa-radius);
+	color: var(--sa-subtle);
+}
+
+.sa .media-modal-close:hover,
+.sa .media-modal-close:active { background: var(--sa-tint); color: var(--sa-strong); }
+
+.sa .media-modal-close:focus {
+	background: var(--sa-tint);
+	color: var(--sa-strong);
+	box-shadow: 0 0 0 2px var(--sa-accent);
+	outline: 2px solid transparent;
+}
+
+.sa .media-modal-close .media-modal-icon::before { color: inherit; }
+.sa .media-modal-close:hover .media-modal-icon::before,
+.sa .media-modal-close:focus .media-modal-icon::before { color: var(--sa-strong); }
+
+.sa .edit-attachment-frame .edit-media-header .left,
+.sa .edit-attachment-frame .edit-media-header .right {
+	top: 9px;
+	width: 34px;
+	height: 34px;
+	border: 0;
+	border-radius: var(--sa-radius);
+	background: transparent;
+	color: var(--sa-subtle);
+}
+
+.sa .edit-attachment-frame .edit-media-header .left { right: 92px; }
+.sa .edit-attachment-frame .edit-media-header .right { right: 54px; }
+
+.sa .edit-attachment-frame .edit-media-header .left::before,
+.sa .edit-attachment-frame .edit-media-header .right::before { color: inherit; line-height: 34px !important; }
+
+.sa.upload-php .media-modal-close,
+.sa.upload-php .media-modal-close:hover,
+.sa.upload-php .media-modal-close:focus {
+	width: 34px;
+	height: 34px;
+	border: 0;
+}
+
+.sa.upload-php .media-modal-close:hover,
+.sa.upload-php .media-modal-close:focus { background: var(--sa-tint); }
+
+.sa .edit-attachment-frame .edit-media-header .left:hover,
+.sa .edit-attachment-frame .edit-media-header .right:hover,
+.sa .edit-attachment-frame .edit-media-header .left:focus,
+.sa .edit-attachment-frame .edit-media-header .right:focus {
+	background: var(--sa-tint);
+	color: var(--sa-strong);
+	border: 0;
+	box-shadow: none;
+}
+
+.sa .edit-attachment-frame .edit-media-header .left:focus-visible,
+.sa .edit-attachment-frame .edit-media-header .right:focus-visible { box-shadow: 0 0 0 2px var(--sa-accent); }
+
+.sa .edit-attachment-frame .edit-media-header [disabled],
+.sa .edit-attachment-frame .edit-media-header [disabled]:hover {
+	background: transparent;
+	color: var(--sa-faint);
+	opacity: 0.6;
+}
+
+.sa .edit-attachment-frame .media-frame-title { border-bottom: 0; box-shadow: none; }
+.sa .media-modal .edit-attachment-frame .media-frame-content {
+	top: 52px;
+	bottom: 0;
+	border: 0;
+	border-top: 1px solid var(--sa-hairline);
+	background: var(--sa-base);
+}
+
+/* Details: preview on the left, properties on the right */
+.sa .edit-attachment-frame .attachment-media-view {
+	background: var(--sa-chrome);
+	padding: 24px;
+	box-sizing: border-box;
+}
+
+.sa .edit-attachment-frame .attachment-media-view .details-image {
+	border-radius: 6px;
+	box-shadow: 0 0 0 1px var(--sa-line), 0 8px 24px -10px rgba(0, 0, 0, 0.25);
+}
+
+.sa .edit-attachment-frame .attachment-info,
+.sa .media-sidebar {
+	background: var(--sa-base);
+	color: var(--sa-text);
+	border-left: 1px solid var(--sa-hairline);
+}
+
+.sa .edit-attachment-frame .attachment-info {
+	padding: 18px 20px 24px;
+	box-sizing: border-box;
+	box-shadow: none;
+}
+
+.sa .edit-attachment-frame .attachment-info .settings-save-status {
+	position: absolute;
+	top: 14px;
+	right: 20px;
+	z-index: 1;
+}
+
+.sa .edit-attachment-frame .attachment-info { position: relative; }
+
+.sa .attachment-info .details,
+.sa .media-sidebar .attachment-info .details,
+.sa .edit-attachment-frame .attachment-info .details {
+	color: var(--sa-subtle);
+	font-size: 13px;
+	line-height: 1.7;
+	border-color: var(--sa-hairline);
+}
+
+.sa .attachment-info .details strong { color: var(--sa-text); font-weight: 500; }
+.sa .attachment-info .filename { color: var(--sa-strong); font-weight: 600; }
+
+.sa .edit-attachment-frame .attachment-info .details,
+.sa .edit-attachment-frame .attachment-info .settings {
+	padding-bottom: 16px;
+	margin-bottom: 16px;
+	border-bottom: 1px solid var(--sa-hairline);
+}
+
+.sa .edit-attachment-frame .attachment-info .settings { border-bottom: 0; margin-bottom: 0; }
+
+/* Fields: label above the control */
+.sa .attachment-details .setting,
+.sa .media-sidebar .setting,
+.sa .attachment-details .attachment-compat .compat-item .label,
+.sa .media-sidebar .compat-item .label {
+	display: block;
+	float: none;
+	width: auto;
+	margin: 0 0 12px;
+	text-align: start;
+}
+
+.sa .attachment-details .setting .name,
+.sa .media-sidebar .setting .name,
+.sa .attachment-details .setting span.name,
+.sa .attachment-details .setting label.name,
+.sa .media-sidebar .setting label.name,
+.sa .compat-item label span {
+	display: block;
+	float: none;
+	width: auto;
+	min-height: 0;
+	max-width: none;
+	margin: 0 0 5px;
+	padding: 0;
+	color: var(--sa-strong);
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 1.4;
+	text-align: start;
+}
+
+.sa .attachment-details .setting input[type="text"],
+.sa .attachment-details .setting input[type="url"],
+.sa .attachment-details .setting input[type="email"],
+.sa .attachment-details .setting textarea,
+.sa .attachment-details .setting select,
+.sa .attachment-details .setting .value,
+.sa .attachment-details .setting + .description,
+.sa .media-sidebar .setting input[type="text"],
+.sa .media-sidebar .setting input[type="url"],
+.sa .media-sidebar .setting textarea,
+.sa .media-sidebar .setting select,
+.sa .media-sidebar .setting .value,
+.sa .attachment-details .copy-to-clipboard-container,
+.sa .media-sidebar .copy-to-clipboard-container {
+	float: none;
+	width: 100%;
+	max-width: none;
+	margin-inline: 0;
+	box-sizing: border-box;
+}
+
+.sa .attachment-details .setting textarea,
+.sa .media-sidebar .setting textarea { min-height: 64px; resize: vertical; }
+
+.sa .attachment-details .setting + .description,
+.sa .attachment-details p.description,
+.sa .media-sidebar p.description {
+	margin: -6px 0 14px;
+	color: var(--sa-subtle);
+	font-size: 12px;
+	line-height: 1.5;
+}
+
+.sa .attachment-details .copy-to-clipboard-container,
+.sa .media-sidebar .copy-to-clipboard-container { margin-top: -4px; }
+
+.sa .attachment-details .settings-save-status,
+.sa .media-sidebar .settings-save-status {
+	color: var(--sa-subtle);
+	font-size: 12px;
+	background: transparent;
+}
+
+.sa .attachment-details .settings-save-status .saved { color: var(--sa-success); font-weight: 500; }
+
+.sa .edit-attachment-frame .attachment-info .actions {
+	margin: 0;
+	padding-top: 16px;
+	border-top: 1px solid var(--sa-hairline);
+	color: var(--sa-faint);
+	font-size: 13px;
+	line-height: 2;
+}
+
+.sa .attachment-info .actions a,
+.sa .attachment-info .details .edit-attachment,
+.sa .media-modal .button-link { color: var(--sa-link); text-decoration: none; }
+
+.sa .attachment-info .actions a:hover,
+.sa .media-modal .button-link:hover { color: var(--sa-accent); }
+
+.sa .attachment-info .actions .delete-attachment,
+.sa .attachment-info .details .delete-attachment,
+.sa .attachment-info .trash-attachment,
+.sa .attachment-info .untrash-attachment,
+.sa .media-modal .button-link.delete-attachment { color: var(--sa-danger); }
+
+.sa .attachment-info .actions .delete-attachment:hover,
+.sa .attachment-info .details .delete-attachment:hover { color: var(--sa-danger-solid); }
+
+.sa .attachment-details .attachment-actions .button { margin: 12px 4px 0; }
+
+/* Picker dialog: tabs */
+.sa .media-modal .media-frame-router {
+	top: 52px;
+	height: 40px;
+	padding: 0 20px;
+	border-bottom: 1px solid var(--sa-hairline);
+	box-sizing: border-box;
+}
+
+.sa .media-modal .media-router {
+	display: flex;
+	gap: 20px;
+	height: 40px;
+	padding: 0;
+}
+
+.sa .media-modal .media-router .media-menu-item,
+.sa .media-modal .media-router > a {
+	float: none;
+	height: 40px;
+	margin: 0;
+	padding: 0 2px;
+	border: 0;
+	border-bottom: 2px solid transparent;
+	border-radius: 0;
+	background: transparent;
+	color: var(--sa-subtle);
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 38px;
+	box-shadow: none;
+}
+
+.sa .media-modal .media-router .media-menu-item:hover { color: var(--sa-strong); }
+
+.sa .media-modal .media-router .media-menu-item.active,
+.sa .media-modal .media-router .media-menu-item.active:last-child,
+.sa .media-modal .media-router .active {
+	margin: 0;
+	border: 0;
+	border-bottom: 2px solid var(--sa-accent);
+	background: transparent;
+	color: var(--sa-strong);
+}
+
+.sa .media-modal .media-router .media-menu-item:focus {
+	box-shadow: 0 0 0 2px var(--sa-accent-soft);
+	outline: 2px solid transparent;
+}
+
+.sa .media-modal .media-frame.hide-router .media-frame-content { top: 52px; }
+.sa .media-modal .media-frame:not(.hide-router) .media-frame-content { top: 92px; }
+
+.sa .media-modal .media-frame-content {
+	bottom: 64px;
+	border: 0;
+	background: var(--sa-base);
+}
+
+/* Picker dialog: left menu (Add media, Create gallery, and so on) */
+.sa .media-modal .media-frame-menu {
+	border-right: 1px solid var(--sa-hairline);
+	background: var(--sa-side);
+}
+
+.sa .media-modal .media-menu {
+	padding: 10px 8px;
+	border-right: 0;
+	background: transparent;
+	box-shadow: none;
+}
+
+.sa .media-modal .media-menu .media-menu-item,
+.sa .media-modal .media-menu > a {
+	padding: 8px 12px;
+	border-radius: var(--sa-radius);
+	color: var(--sa-text);
+	font-size: 14px;
+	line-height: 1.4;
+}
+
+.sa .media-modal .media-menu .media-menu-item:hover { background: var(--sa-tint); color: var(--sa-strong); }
+
+.sa .media-modal .media-menu .media-menu-item.active,
+.sa .media-modal .media-menu .active,
+.sa .media-modal .media-menu .active:hover {
+	background: var(--sa-nav-active);
+	color: var(--sa-link);
+	font-weight: 600;
+}
+
+.sa .media-modal .media-menu .separator { margin: 8px 12px; border-color: var(--sa-hairline); }
+.sa .media-modal .media-frame-menu-heading { color: var(--sa-subtle); }
+
+/* Picker dialog: filter row, sidebar and footer */
+.sa .media-modal .attachments-browser .media-toolbar {
+	height: 56px;
+	padding: 0 14px;
+	background: var(--sa-base);
+	border: 0;
+	box-shadow: none;
+}
+
+.sa .media-modal .attachments-browser .media-toolbar-secondary,
+.sa .media-modal .attachments-browser .media-toolbar-primary {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	height: 56px;
+}
+
+.sa .media-modal .attachments-browser .media-toolbar-secondary > *,
+.sa .media-modal .attachments-browser .media-toolbar-primary > * { margin: 0; }
+
+.sa .media-modal .media-toolbar label,
+.sa .media-modal .media-search-input-label {
+	position: static;
+	margin: 0;
+	color: var(--sa-subtle);
+	font-size: 13px;
+	font-weight: 400;
+	white-space: nowrap;
+}
+
+.sa .media-modal .attachments-browser .media-toolbar-primary input[type="search"] { width: 240px; max-width: 100%; }
+
+.sa .media-modal .attachments-browser .attachments,
+.sa .media-modal .attachments-browser .attachments-wrapper,
+.sa .media-modal .attachments-browser .uploader-inline { top: 56px; }
+
+.sa .media-modal .attachments-browser .attachments { padding: 2px 10px 10px; }
+
+.sa .media-modal .media-sidebar {
+	top: 0;
+	padding: 16px 18px 24px;
+	background: var(--sa-side);
+}
+
+.sa .media-sidebar h2,
+.sa .media-sidebar h3,
+.sa .media-modal .media-sidebar h2 {
+	margin: 0 0 12px;
+	color: var(--sa-subtle);
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0;
+	text-transform: none;
+}
+
+.sa .media-sidebar .attachment-info {
+	padding: 0 0 14px;
+	margin-bottom: 14px;
+	border-left: 0;
+	border-bottom: 1px solid var(--sa-hairline);
+	background: transparent;
+}
+
+.sa .media-sidebar .attachment-info .thumbnail {
+	border-radius: 6px;
+	overflow: hidden;
+}
+
+.sa .media-sidebar .attachment-info .thumbnail img { border-radius: 6px; }
+.sa .media-sidebar .attachment-info .thumbnail::after { box-shadow: inset 0 0 0 1px var(--sa-line); border-radius: 6px; }
+
+.sa .media-modal .media-frame-toolbar {
+	height: 64px;
+	bottom: 0;
+	border-top: 1px solid var(--sa-hairline);
+	background: var(--sa-base);
+}
+
+.sa .media-modal .media-frame-toolbar .media-toolbar {
+	background: var(--sa-base);
+	top: 0;
+	bottom: 0;
+	height: 64px;
+	padding: 0 20px;
+	border: 0;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.sa .media-modal .media-frame-toolbar .media-toolbar-primary,
+.sa .media-modal .media-frame-toolbar .media-toolbar-secondary {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	height: auto;
+	float: none;
+}
+
+.sa .media-modal .media-frame-toolbar .media-toolbar-primary { margin-inline-start: auto; }
+.sa .media-modal .media-frame-toolbar .media-toolbar-primary > .media-button,
+.sa .media-modal .media-frame-toolbar .media-toolbar-secondary > .media-button { margin: 0; float: none; }
+
+.sa .media-modal .media-selection .selection-info .count { color: var(--sa-strong); font-weight: 600; }
+.sa .media-modal .media-selection .selection-info .button-link { font-size: 13px; }
+.sa .media-modal .media-selection .selection-info .clear-selection { color: var(--sa-danger); }
+.sa .media-modal .media-selection .attachment .thumbnail::after { border-radius: 4px; }
+.sa .media-modal .media-selection .attachment-preview { border-radius: 4px; }
+
+/* Buttons inside the dialog when it opens over the block editor, where the
+   main content skin is off. */
+.sa-editor .media-modal .button {
+	min-height: 36px;
+	padding: 0 14px;
+	line-height: 34px;
+	font-size: 14px;
+	font-weight: 500;
+	color: var(--sa-strong);
+	background: var(--sa-control);
+	border: 1px solid var(--sa-border);
+	border-radius: var(--sa-radius);
+	box-shadow: none;
+}
+
+.sa-editor .media-modal .button:hover { background: var(--sa-tint); color: var(--sa-strong); border-color: var(--sa-border); }
+
+.sa-editor .media-modal .button.button-primary {
+	color: var(--sa-on-accent);
+	background: var(--sa-accent);
+	border-color: transparent;
+}
+
+.sa-editor .media-modal .button.button-primary:hover { background: var(--sa-accent-hover); color: var(--sa-on-accent); }
+
+.sa-editor .media-modal .button[disabled],
+.sa-editor .media-modal .button.button-primary[disabled] {
+	color: var(--sa-faint) !important;
+	background: var(--sa-tint) !important;
+	border-color: var(--sa-hairline) !important;
+}
+
+/* Fields inside any dialog. Core gives these their own square style. */
+.sa .media-modal input[type="text"],
+.sa .media-modal input[type="url"],
+.sa .media-modal input[type="email"],
+.sa .media-modal input[type="number"],
+.sa .media-modal input[type="search"],
+.sa .media-modal select,
+.sa .media-modal textarea {
+	min-height: 36px;
+	padding: 0 10px;
+	font-size: 14px;
+	line-height: 1.4;
+	color: var(--sa-strong);
+	background-color: var(--sa-control);
+	border: 1px solid var(--sa-border);
+	border-radius: var(--sa-radius);
+	box-shadow: none;
+}
+
+.sa .media-modal select { padding: 0 30px 0 10px; }
+.sa .media-modal textarea { padding: 8px 10px; line-height: 1.5; }
+
+.sa .media-modal input[type="text"]:focus,
+.sa .media-modal input[type="url"]:focus,
+.sa .media-modal input[type="email"]:focus,
+.sa .media-modal input[type="number"]:focus,
+.sa .media-modal input[type="search"]:focus,
+.sa .media-modal select:focus,
+.sa .media-modal textarea:focus {
+	border-color: var(--sa-accent);
+	box-shadow: 0 0 0 3px var(--sa-accent-soft);
+	outline: 2px solid transparent;
+}
+
+.sa .media-modal input[readonly],
+.sa .media-modal textarea[readonly] {
+	color: var(--sa-subtle);
+	background-color: var(--sa-tint);
+	border-color: var(--sa-hairline);
+}
+
+/* 4. Uploader --------------------------------------------------------------- */
+
+.sa .uploader-inline,
+.sa .media-frame.mode-grid .uploader-inline {
+	background: transparent;
+	color: var(--sa-text);
+}
+
+.sa .media-frame.mode-grid .uploader-inline {
+	position: relative;
+	margin: 0 0 20px;
+	padding: 0;
+	border: 1.5px dashed var(--sa-border);
+	border-radius: 12px;
+	background: var(--sa-chrome);
+	box-shadow: none;
+}
+
+.sa .media-frame.mode-grid .uploader-inline .uploader-inline-content { padding: 36px 16px 30px; }
+
+.sa .uploader-inline .close {
+	top: 8px;
+	right: 8px;
+	width: 32px;
+	height: 32px;
+	border-radius: var(--sa-radius);
+	color: var(--sa-subtle);
+	font-size: 20px;
+	line-height: 32px;
+}
+
+.sa .uploader-inline .close:hover,
+.sa .uploader-inline .close:focus {
+	background: var(--sa-tint);
+	color: var(--sa-strong);
+	box-shadow: none;
+}
+
+.sa .uploader-inline-content .upload-ui h2,
+.sa .uploader-inline h2.upload-instructions,
+.sa .drag-drop .drag-drop-inside p.drag-drop-info {
+	color: var(--sa-strong);
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 1.4;
+}
+
+.sa .uploader-inline .upload-ui,
+.sa .uploader-inline .upload-ui p,
+.sa .uploader-inline .post-upload-ui,
+.sa .uploader-inline .post-upload-ui p,
+.sa .drag-drop .drag-drop-inside p,
+.sa .max-upload-size {
+	color: var(--sa-subtle);
+	font-size: 13px;
+}
+
+.sa .uploader-inline .browser.button,
+.sa .uploader-inline .button.button-hero,
+.sa .drag-drop .drag-drop-inside .button {
+	min-height: 38px;
+	padding: 0 16px;
+	line-height: 36px;
+	font-size: 14px;
+}
+
+.sa .uploader-window {
+	background: color-mix(in oklab, var(--sa-accent) 82%, transparent);
+	backdrop-filter: blur(2px);
+}
+
+.sa .uploader-window-content { border: 2px dashed rgba(255, 255, 255, 0.85); border-radius: 16px; }
+.sa .uploader-window h1,
+.sa .uploader-window-content h1 { color: #fff; font-weight: 600; font-size: 24px; }
+
+.sa .media-uploader-status .upload-errors .upload-error {
+	padding: 10px 12px;
+	border: 1px solid color-mix(in oklab, var(--sa-danger) 30%, transparent);
+	border-radius: var(--sa-radius);
+	background: var(--sa-danger-tint);
+	color: var(--sa-text);
+}
+
+.sa .media-uploader-status .upload-details,
+.sa .media-uploader-status .upload-filename { color: var(--sa-subtle); }
+
+/* Upload page (media-new.php) */
+.sa-ui #drag-drop-area,
+.sa-ui .drag-drop #drag-drop-area {
+	min-height: 220px;
+	border: 1.5px dashed var(--sa-border);
+	border-radius: 12px;
+	background: var(--sa-chrome);
+}
+
+.sa-ui .drag-drop.drag-over #drag-drop-area {
+	border-color: var(--sa-accent);
+	background: var(--sa-accent-soft);
+}
+
+.sa-ui .drag-drop-inside { margin-top: 60px; }
+.sa-ui .drag-drop-inside p { margin-bottom: 8px; }
+
+.sa-ui #media-items .media-item,
+.sa-ui .media-upload-form .media-item {
+	min-height: 52px;
+	margin: 8px 0 0;
+	padding: 0 12px;
+	border: 1px solid var(--sa-line);
+	border-radius: var(--sa-radius);
+	background: var(--sa-base);
+	box-shadow: none;
+}
+
+.sa-ui #media-items { border: 0; }
+.sa-ui .media-item .filename { color: var(--sa-strong); font-weight: 500; line-height: 52px; }
+.sa-ui .media-item .pinkynail { margin: 6px 12px 6px 0; border-radius: 4px; }
+.sa-ui .media-item .attachment-details,
+.sa-ui .media-item .edit-attachment,
+.sa-ui .media-item .copy-to-clipboard-container { line-height: 52px; }
+
+.sa-ui .media-item .progress {
+	height: 6px;
+	margin: 23px 8px;
+	border: 0;
+	border-radius: 999px;
+	background: var(--sa-fill);
+	box-shadow: none;
+	overflow: hidden;
+}
+
+.sa-ui .media-item .bar {
+	height: 6px;
+	border-radius: 999px;
+	background: var(--sa-accent);
+}
+
+.sa-ui .media-item .percent { display: none; }
+.sa-ui .media-item .error-div,
+.sa-ui .media-item.error { background: var(--sa-danger-tint); border-color: color-mix(in oklab, var(--sa-danger) 30%, transparent); }
+
+/* 5. List view and the edit screen ------------------------------------------ */
+
+.sa-ui table.media .column-title .media-icon {
+	width: 52px;
+	margin-inline-end: 12px;
+}
+
+.sa-ui table.media .column-title .media-icon img {
+	width: 52px;
+	height: 52px;
+	max-width: 52px;
+	border-radius: 6px;
+	object-fit: cover;
+	background: var(--sa-tint);
+	box-shadow: 0 0 0 1px var(--sa-line);
+}
+
+.sa-ui table.media .column-title .media-icon img.attachment-60x60:not([src*="uploads"]),
+.sa-ui table.media .column-title .media-icon:not(.image-icon) img {
+	padding: 10px;
+	box-sizing: border-box;
+	object-fit: contain;
+	opacity: 0.6;
+}
+
+.sa-ui table.media .column-title .has-media-icon ~ .row-actions { margin-inline-start: 64px; }
+.sa-ui table.media .column-title strong.has-media-icon { display: block; min-height: 0; }
+.sa-ui table.media .column-title .filename { color: var(--sa-subtle); font-size: 13px; margin: 2px 0 0; }
+.sa-ui table.media td.column-parent,
+.sa-ui table.media td.column-parent strong { color: var(--sa-subtle); font-weight: 400; }
+.sa-ui table.media td.column-parent strong a { color: var(--sa-link); font-weight: 500; }
+
+/* Edit media screen */
+.sa-ui .wp_attachment_holder {
+	padding: 16px;
+	border: 1px solid var(--sa-line);
+	border-radius: var(--sa-radius-lg);
+	background: var(--sa-chrome);
+}
+
+.sa-ui .wp_attachment_holder .thumbnail,
+.sa-ui .wp_attachment_image img {
+	border-radius: 6px;
+	box-shadow: 0 0 0 1px var(--sa-line);
+}
+
+.sa-ui .wp_attachment_details label { color: var(--sa-strong); font-weight: 500; }
+.sa-ui .wp_attachment_details label[for="content"] { font-size: 14px; }
+.sa-ui .attachment-alt-text-description,
+.sa-ui .wp_attachment_details .description { color: var(--sa-subtle); }
+
+/* Image editor */
+.sa .imgedit-menu .button,
+.sa .imgedit-menu button { margin-inline-end: 6px; }
+.sa .imgedit-panel-content,
+.sa .imgedit-wrap { color: var(--sa-text); }
+.sa .imgedit-group {
+	padding: 14px;
+	border: 1px solid var(--sa-line);
+	border-radius: var(--sa-radius);
+	background: var(--sa-base);
+	box-shadow: none;
+}
+.sa .imgedit-group-top h2,
+.sa .imgedit-settings legend { color: var(--sa-strong); font-weight: 600; }
+
+/* Phones */
+@media screen and (max-width: 782px) {
+	.sa .media-modal { top: 10px; right: 10px; bottom: 10px; left: 10px; }
+	.sa .media-frame.mode-grid .media-toolbar-primary,
+	.sa.upload-php .wp-filter .search-form { margin-inline-start: 0; width: 100%; }
+	.sa .media-frame.mode-grid .media-toolbar-primary input[type="search"],
+	.sa.upload-php .wp-filter .search-form input[type="search"] { width: 100%; }
+	.sa .edit-attachment-frame .attachment-info { border-left: 0; border-top: 1px solid var(--sa-hairline); }
+}

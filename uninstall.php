@@ -1,0 +1,7 @@
+<?php
+/** Remove everything Slate Admin stored. */
+if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
+	exit;
+}
+delete_option( 'slate_admin' );
+delete_metadata( 'user', 0, 'slate_admin_scheme', '', true );
