@@ -1164,7 +1164,10 @@ body.sa-ui { font-size: 14px; }
 
 .sa-ui .alternate,
 .sa-ui .striped > tbody > :nth-child(odd),
-.sa-ui ul.striped > :nth-child(odd) { background-color: transparent; }
+.sa-ui ul.striped > :nth-child(odd),
+body.sa-ui table.wp-list-table.striped > tbody > tr:nth-child(odd),
+body.sa-ui table.widefat.striped > tbody > tr:nth-child(odd),
+body.sa-ui table.wp-list-table > tbody > tr.alternate { background-color: transparent; }
 
 .sa-ui .wp-list-table tbody tr:hover,
 .sa-ui .widefat.striped > tbody > tr:hover { background-color: var(--sa-chrome); }
@@ -1221,16 +1224,29 @@ body.sa-ui { font-size: 14px; }
 	font-size: 16px;
 }
 .sa-ui .tablenav .tablenav-pages .current-page { min-height: 36px; padding: 0; text-align: center; }
-.sa-ui p.search-box { margin: 0 0 4px; }
-.sa-ui p.search-box input[name="s"] { margin-inline-end: 6px; }
+.sa-ui p.search-box {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	width: auto;
+	margin: 0 0 4px;
+}
+
+.sa-ui p.search-box input[name="s"],
+.sa-ui p.search-box input[type="search"] { margin: 0; flex: 0 1 auto; }
+.sa-ui p.search-box .button { margin: 0; flex: none; }
 
 /* Status filters as a segmented control. The font-size trick hides the
    "|" separators core prints between links. */
 .sa-ui .subsubsub {
 	display: flex;
+	flex: 0 1 auto;
 	flex-wrap: wrap;
 	gap: 2px;
 	float: left;
+	width: fit-content;
+	max-width: 100%;
+	box-sizing: border-box;
 	margin: 0 12px 12px 0;
 	padding: 3px;
 	background: var(--sa-tint);
@@ -1431,6 +1447,19 @@ body.sa-ui { font-size: 14px; }
 .sa-ui .plugins .inactive .plugin-description p,
 .sa-ui .plugins .inactive .plugin-version-author-uri { color: var(--sa-subtle); }
 .sa-ui .plugins .plugin-update-tr .update-message { margin: 0 12px 12px 44px; }
+
+.sa-ui.plugin-install-php #the-list {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(min(520px, 100%), 1fr));
+	gap: 16px;
+}
+
+.sa-ui.plugin-install-php #the-list > .plugin-card {
+	width: auto;
+	margin: 0;
+	float: none;
+	clear: none;
+}
 
 .sa-ui .plugin-card {
 	padding: 4px;

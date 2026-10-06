@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Slate Admin
  * Description:       A lightweight, modern skin for the WordPress admin and login page. Styling only: light neutral surfaces, hairline cards, one accent colour, optional dark mode. Nothing is loaded on the public site.
- * Version:           1.5.0
+ * Version:           1.5.1
  * Requires at least: 6.4
  * Requires PHP:      7.4
  * Author:            SynerByte Tech
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'SLATE_ADMIN_VERSION', '1.5.0' );
+define( 'SLATE_ADMIN_VERSION', '1.5.1' );
 define( 'SLATE_ADMIN_OPTION', 'slate_admin' );
 define( 'SLATE_ADMIN_USER_META', 'slate_admin_scheme' );
 
