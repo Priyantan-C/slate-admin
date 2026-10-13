@@ -1180,6 +1180,11 @@ body.sa-ui { font-size: 14px; }
 .sa-ui .widefat tbody th.check-column { padding: 12px 0 0 12px; }
 .sa-ui .widefat .check-column input { margin: 0; }
 
+/* Core prints a fixed near-black for text in table cells, unreadable in dark. */
+.sa-ui .widefat p,
+.sa-ui .widefat ol,
+.sa-ui .widefat ul { color: inherit; }
+
 .sa-ui .widefat tbody tr > td,
 .sa-ui .widefat tbody tr > th { border-top: 1px solid var(--sa-hairline); box-shadow: none; }
 .sa-ui .widefat tbody tr:first-child > td,
@@ -1470,6 +1475,64 @@ body.sa-ui table.wp-list-table > tbody > tr.alternate { background-color: transp
 .sa-ui .plugins .inactive .plugin-description p,
 .sa-ui .plugins .inactive .plugin-version-author-uri { color: var(--sa-subtle); }
 .sa-ui .plugins .plugin-update-tr .update-message { margin: 0 12px 12px 44px; }
+
+/* Updates screen: plugin and theme tables. Core's grey icon tile and its
+   check-column offsets are written for a light, 13px table. */
+.sa-ui .updates-table td,
+.sa-ui .updates-table th { vertical-align: top; }
+.sa-ui .updates-table thead td,
+.sa-ui .updates-table tfoot td { vertical-align: middle; padding-top: 11px; padding-bottom: 11px; }
+.sa-ui .updates-table thead td.check-column,
+.sa-ui .updates-table tfoot td.check-column,
+.sa-ui .updates-table tbody td.check-column { width: 2.4em; padding: 14px 0 14px 16px; }
+.sa-ui .updates-table thead td.check-column,
+.sa-ui .updates-table tfoot td.check-column { padding-top: 11px; padding-bottom: 11px; }
+.sa-ui .updates-table .check-column input,
+.sa-ui .updates-table tbody td.check-column input[type="checkbox"] { margin: 0; vertical-align: middle; }
+.sa-ui .updates-table td.plugin-title { padding: 14px 16px 14px 4px; }
+.sa-ui .updates-table thead td + td,
+.sa-ui .updates-table tfoot td + td { padding-inline-start: 4px; }
+
+.sa-ui .updates-table .plugin-title p {
+	margin: 0;
+	color: var(--sa-subtle);
+	font-size: 13px;
+	line-height: 1.6;
+}
+.sa-ui .updates-table .plugin-title p::after { content: ""; display: table; clear: both; }
+.sa-ui .updates-table .plugin-title strong {
+	display: block;
+	margin-bottom: 2px;
+	color: var(--sa-strong);
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.sa-ui .plugins .plugin-title .dashicons,
+.sa-ui .plugins .plugin-title img.plugin-icon,
+.sa-ui .plugins .plugin-title img.updates-table-screenshot {
+	width: 48px;
+	height: 48px;
+	margin-inline-end: 14px;
+	padding: 0;
+	border-radius: var(--sa-radius);
+	overflow: hidden;
+}
+.sa-ui #update-themes-table .plugin-title img.updates-table-screenshot { width: 64px; height: auto; }
+.sa-ui .plugins .plugin-title .dashicons::before {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	box-sizing: border-box;
+	background: var(--sa-tint);
+	box-shadow: inset 0 0 0 1px var(--sa-line);
+	border-radius: var(--sa-radius);
+	color: var(--sa-faint);
+	font-size: 24px;
+}
 
 .sa-ui.plugin-install-php #the-list {
 	display: grid;

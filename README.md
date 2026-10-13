@@ -48,8 +48,8 @@ Use the zip attached to a release. The "Source code" zip that GitHub generates u
 
 Once installed, the plugin updates itself from this repository's releases, like a plugin from wordpress.org:
 
-- WordPress checks for a new release every few hours and shows it on the **Plugins** and **Updates** screens, with the changelog under "View details".
-- New versions install automatically by default. Turn that off under **Settings > Slate Admin > Updates** to review and install them yourself.
+- A new release shows on the **Plugins** and **Updates** screens within six hours of publishing (straight away after **Dashboard > Updates > Check again**), with the changelog under "View details".
+- Automatic installs are off unless you turn them on with the plugin's **Enable auto-updates** link on the **Plugins** screen, the same as any other plugin.
 - No token or account is needed. The plugin reads the public GitHub API, and the plugin's `Update URI` header stops WordPress from ever confusing it with a different plugin of the same name on wordpress.org.
 
 To turn update checks off entirely on a site, add `define( 'SLATE_ADMIN_DISABLE_UPDATES', true );` to `wp-config.php`. To update from a fork, use the `slate_admin_update_repo` filter (`'owner/repo'`).
@@ -65,7 +65,6 @@ Bump the version in `slate-admin.php` (header and `SLATE_ADMIN_VERSION`) and the
 | Accent colour | Primary buttons, links, focus rings and the open sidebar section |
 | Default appearance | Light, Dark, or follow the device. Applies to the login page and to users who have not chosen their own |
 | Content width | Centred up to 1440px, or full width |
-| Updates | Install new versions automatically (on by default) |
 
 ## Agency defaults
 

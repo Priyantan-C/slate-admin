@@ -7,7 +7,13 @@
  * the update_plugins_github.com filter below. That filter reads the latest
  * public release from the GitHub API and offers its slate-admin.zip asset as
  * the update package. WordPress then shows the update on the Plugins and
- * Updates screens and, when enabled, installs it on its own.
+ * Updates screens.
+ *
+ * WordPress only re-runs that check every twelve hours, so the cached result
+ * is also merged into the stored update list whenever it is read: a new
+ * release shows within a few hours of publishing, and the entry is there for
+ * the auto-update toggle on the Plugins screen. Whether new versions install
+ * on their own is left entirely to that toggle.
  *
  * No token is needed: the repository is public and the API allows 60
  * unauthenticated requests per hour per server, far more than one cached
@@ -107,6 +113,25 @@ function slate_admin_parse_release( array $data, $repo ) {
 	);
 }
 
+/** The update entry WordPress stores for this plugin. */
+function slate_admin_update_item( array $release ) {
+	return array(
+		'id'           => 'https://github.com/' . slate_admin_update_repo(),
+		'slug'         => 'slate-admin',
+		'plugin'       => plugin_basename( SLATE_ADMIN_FILE ),
+		'version'      => $release['version'],
+		'new_version'  => $release['version'],
+		'url'          => $release['url'],
+		'package'      => $release['package'],
+		'requires'     => '6.4',
+		'requires_php' => '7.4',
+		'tested'       => get_bloginfo( 'version' ),
+		'icons'        => array(),
+		'banners'      => array(),
+		'banners_rtl'  => array(),
+	);
+}
+
 /** Answer WordPress's update check for this plugin. */
 add_filter(
 	'update_plugins_github.com',
@@ -115,21 +140,50 @@ add_filter(
 			return $update;
 		}
 		$release = slate_admin_latest_release();
-		if ( ! $release ) {
-			return $update;
-		}
-		return array(
-			'slug'         => 'slate-admin',
-			'version'      => $release['version'],
-			'url'          => $release['url'],
-			'package'      => $release['package'],
-			'requires'     => '6.4',
-			'requires_php' => '7.4',
-			'tested'       => get_bloginfo( 'version' ),
-		);
+		return $release ? slate_admin_update_item( $release ) : $update;
 	},
 	10,
 	3
+);
+
+/**
+ * Merge the latest release into the stored update list each time it is read.
+ *
+ * Core refreshes that list every twelve hours at most, so without this a new
+ * release could take half a day to appear. In the admin and in cron the
+ * release is fetched when the six-hour cache runs out; elsewhere (the toolbar
+ * on the front end) only the cache is used, so visitors never wait on GitHub.
+ */
+add_filter(
+	'site_transient_update_plugins',
+	function ( $value ) {
+		if ( ! is_object( $value ) || ! slate_admin_updates_enabled() ) {
+			return $value;
+		}
+		if ( is_admin() || wp_doing_cron() ) {
+			$release = slate_admin_latest_release();
+		} else {
+			$cached  = get_site_transient( SLATE_ADMIN_RELEASE_CACHE );
+			$release = is_array( $cached ) && ! empty( $cached['version'] ) ? $cached : null;
+		}
+		if ( ! $release ) {
+			return $value;
+		}
+
+		$file = plugin_basename( SLATE_ADMIN_FILE );
+		$item = (object) slate_admin_update_item( $release );
+
+		$value->response  = isset( $value->response ) && is_array( $value->response ) ? $value->response : array();
+		$value->no_update = isset( $value->no_update ) && is_array( $value->no_update ) ? $value->no_update : array();
+		unset( $value->response[ $file ], $value->no_update[ $file ] );
+
+		if ( version_compare( $release['version'], SLATE_ADMIN_VERSION, '>' ) ) {
+			$value->response[ $file ] = $item;
+		} else {
+			$value->no_update[ $file ] = $item;
+		}
+		return $value;
+	}
 );
 
 /** "Check again" on the Updates screen also refreshes the cached release. */
@@ -139,7 +193,9 @@ add_action(
 		if ( isset( $_GET['force-check'] ) && current_user_can( 'update_plugins' ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			delete_site_transient( SLATE_ADMIN_RELEASE_CACHE );
 		}
-	}
+	},
+	// Before core's own check on this hook (priority 10), so it sees the fresh release.
+	5
 );
 
 /** After an update, forget the cached release so the next check is fresh. */
@@ -210,16 +266,3 @@ function slate_admin_notes_html( $notes ) {
 	}
 	return '' !== $html ? $html : '<p>' . esc_html__( 'See the release page on GitHub.', 'slate-admin' ) . '</p>';
 }
-
-/** Install new versions automatically unless the site owner turned it off. */
-add_filter(
-	'auto_update_plugin',
-	function ( $update, $item ) {
-		if ( isset( $item->plugin ) && plugin_basename( SLATE_ADMIN_FILE ) === $item->plugin && slate_admin_updates_enabled() ) {
-			return (bool) slate_admin_opt( 'auto_update' );
-		}
-		return $update;
-	},
-	10,
-	2
-);
