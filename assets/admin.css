@@ -29,6 +29,10 @@
 	   for the chosen accent; the mixes here are only the fallback. */
 	--sa-link: light-dark(var(--sa-link-l, color-mix(in oklab, var(--sa-accent), #000 22%)), var(--sa-link-d, color-mix(in oklab, var(--sa-accent), #fff 48%)));
 	--sa-nav-active: light-dark(color-mix(in oklab, var(--sa-accent) 10%, transparent), color-mix(in oklab, var(--sa-accent) 26%, transparent));
+	/* Current item in the sidebar and in media menus: neutral by default, the
+	   accent when "Accent in the sidebar" is on (body.sa-nav-accent). */
+	--sa-nav-current-bg: light-dark(#ebebeb, #2a2a2a);
+	--sa-nav-current: var(--sa-strong);
 
 	/* Surfaces. The page, sidebar and toolbar share one canvas; white is kept
 	   for things that hold content, so cards and tables stand out on it. */
@@ -79,6 +83,11 @@
 	   (menus, dialogs) use --sa-pop. */
 	--sa-shadow-sm: 0 1px 2px light-dark(rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.5));
 	--sa-pop: 0 0 0 1px var(--sa-line), 0 8px 24px -6px rgba(0, 0, 0, 0.18);
+}
+
+body.sa-nav-accent {
+	--sa-nav-current-bg: var(--sa-nav-active);
+	--sa-nav-current: var(--sa-link);
 }
 
 :root:has(body.sa-scheme-dark) { color-scheme: dark; }
@@ -325,7 +334,22 @@
 .sa #adminmenu div.wp-menu-image::before,
 .sa #adminmenu .wp-menu-image.svg { color: var(--sa-subtle); }
 
-.sa #adminmenu .wp-menu-image img { opacity: 0.75; }
+/* Image and SVG icons from plugins: grey like the icon font, full strength on
+   hover and for the current section. Colour only, sizes are untouched. */
+.sa #adminmenu div.wp-menu-image.svg,
+.sa #adminmenu div.wp-menu-image img {
+	opacity: 0.6;
+	filter: grayscale(1);
+}
+
+.sa #adminmenu li.menu-top:hover div.wp-menu-image.svg,
+.sa #adminmenu li.menu-top:hover div.wp-menu-image img,
+.sa #adminmenu li.opensub div.wp-menu-image.svg,
+.sa #adminmenu li.opensub div.wp-menu-image img,
+.sa #adminmenu li.wp-has-current-submenu div.wp-menu-image.svg,
+.sa #adminmenu li.wp-has-current-submenu div.wp-menu-image img,
+.sa #adminmenu li.current div.wp-menu-image.svg,
+.sa #adminmenu li.current div.wp-menu-image img { opacity: 1; }
 
 .sa #adminmenu li.wp-menu-separator { background: transparent; }
 
@@ -350,7 +374,7 @@
 .sa #adminmenu li a:focus div.wp-menu-image::before,
 .sa #adminmenu li.opensub div.wp-menu-image::before { color: var(--sa-strong); }
 
-/* Current section: soft accent pill, accent text and icon. */
+/* Current section: a soft pill, neutral or accent (see the nav tokens). */
 .sa #adminmenu li.wp-has-current-submenu,
 .sa #adminmenu li.current.menu-top,
 .sa #adminmenu li.wp-has-current-submenu:hover { background: transparent; }
@@ -361,19 +385,19 @@
 .sa #adminmenu .wp-menu-arrow div,
 .sa.folded #adminmenu li.current.menu-top,
 .sa.folded #adminmenu li.wp-has-current-submenu {
-	background: var(--sa-nav-active);
-	color: var(--sa-link);
+	background: var(--sa-nav-current-bg);
+	color: var(--sa-nav-current);
 }
 
 .sa #adminmenu li.wp-has-current-submenu:hover > a.menu-top,
 .sa #adminmenu li.current.menu-top:hover > a.menu-top,
-.sa #adminmenu li.wp-has-current-submenu > a.menu-top:focus { background: var(--sa-nav-active); }
+.sa #adminmenu li.wp-has-current-submenu > a.menu-top:focus { background: var(--sa-nav-current-bg); }
 
 .sa #adminmenu li.wp-has-current-submenu div.wp-menu-name,
 .sa #adminmenu li.current div.wp-menu-name,
 .sa #adminmenu li.wp-has-current-submenu:hover div.wp-menu-name,
 .sa #adminmenu li.current.menu-top:hover div.wp-menu-name {
-	color: var(--sa-link);
+	color: var(--sa-nav-current);
 	font-weight: 600;
 }
 
@@ -384,7 +408,7 @@
 .sa #adminmenu li.wp-has-current-submenu a:focus div.wp-menu-image::before,
 .sa #adminmenu li.wp-has-current-submenu.opensub div.wp-menu-image::before,
 .sa #adminmenu li.wp-has-current-submenu:hover div.wp-menu-image::before,
-.sa #adminmenu li.current:hover div.wp-menu-image::before { color: var(--sa-link); }
+.sa #adminmenu li.current:hover div.wp-menu-image::before { color: var(--sa-nav-current); }
 
 /* The little triangle that points at the content. */
 .sa ul#adminmenu a.wp-has-current-submenu::after,
@@ -414,7 +438,7 @@
 .sa #adminmenu .opensub .wp-submenu li.current a,
 .sa #adminmenu a.wp-has-current-submenu:focus + .wp-submenu li.current a,
 .sa #adminmenu .wp-has-current-submenu .wp-submenu li.current a {
-	color: var(--sa-link);
+	color: var(--sa-nav-current);
 	font-weight: 600;
 }
 
@@ -483,9 +507,9 @@
 .sa #adminmenu li a.wp-has-current-submenu .update-plugins,
 .sa #adminmenu li:hover a .awaiting-mod,
 .sa #adminmenu li.menu-top:hover > a .update-plugins {
-	background: var(--sa-accent);
-	color: var(--sa-on-accent);
-	border-radius: 999px;
+	background: var(--sa-fill);
+	color: var(--sa-strong);
+	border-radius: 5px;
 	font-weight: 600;
 }
 
@@ -703,6 +727,23 @@ body.sa-ui { font-size: 14px; }
 	border-radius: 3px;
 }
 
+/* Links inside content (table cells, boxes, descriptions) read as text with
+   a faint underline; the accent is kept for buttons and actions. :where()
+   keeps this at the specificity of ".sa-ui a", so any more specific rule
+   (chips, row actions, delete links, plugins' own colours) still wins. */
+.sa-ui :where(.widefat tbody td, .widefat tbody th, .postbox .inside, .form-table td, .description) a:where(:not(.button, .button-link, .button-primary, .button-secondary, .nav-tab, [role="tab"], .row-actions a, .post-com-count, .category-tabs a, .wp-tab-bar a, .subsubsub a)) {
+	color: var(--sa-strong);
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-decoration-color: color-mix(in oklab, currentColor 35%, transparent);
+	text-underline-offset: 3px;
+}
+
+.sa-ui :where(.widefat tbody td, .widefat tbody th, .postbox .inside, .form-table td, .description) a:where(:not(.button, .button-link, .button-primary, .button-secondary, .nav-tab, [role="tab"], .row-actions a, .post-com-count, .category-tabs a, .wp-tab-bar a, .subsubsub a)):hover {
+	color: var(--sa-strong);
+	text-decoration-color: currentColor;
+}
+
 .sa-ui code,
 .sa-ui kbd {
 	background: var(--sa-tint);
@@ -732,7 +773,7 @@ body.sa-ui { font-size: 14px; }
 	background: var(--sa-control);
 	border: 1px solid var(--sa-border);
 	border-radius: var(--sa-radius);
-	box-shadow: var(--sa-shadow-sm);
+	box-shadow: none;
 	text-shadow: none;
 }
 
@@ -796,7 +837,7 @@ body.sa-ui { font-size: 14px; }
 	color: var(--sa-on-accent);
 	background: var(--sa-accent);
 	border-color: transparent;
-	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+	box-shadow: none;
 }
 
 .sa-ui.wp-core-ui .button-primary:hover,
@@ -1004,6 +1045,23 @@ body.sa-ui { font-size: 14px; }
 	.sa-ui:is(.options-general-php, .options-writing-php, .options-reading-php, .options-discussion-php, .options-media-php, .options-permalink-php, .profile-php, .user-edit-php, .user-new-php, .settings_page_slate-admin) .wrap .form-table > tbody > tr > td { padding-inline: 16px; }
 }
 
+/* Slate Admin settings: accent picker with preset swatches. */
+.sa-ui .sa-accent-field { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.sa-ui .sa-swatches { display: flex; flex-wrap: wrap; gap: 6px; }
+.sa-ui .sa-swatch {
+	width: 24px;
+	height: 24px;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: var(--sa-swatch);
+	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+	cursor: pointer;
+}
+.sa-ui .sa-swatch:hover { box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12), 0 0 0 2px var(--sa-base), 0 0 0 3px var(--sa-border); }
+.sa-ui .sa-swatch[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--sa-base), 0 0 0 4px var(--sa-swatch); }
+.sa-ui .sa-swatch:focus-visible { outline: 2px solid var(--sa-strong); outline-offset: 3px; }
+
 /* Cards */
 .sa-ui .postbox,
 .sa-ui .card,
@@ -1146,6 +1204,7 @@ body.sa-ui { font-size: 14px; }
 .sa-ui .widefat th {
 	color: var(--sa-text);
 	font-size: 14px;
+	font-variant-numeric: tabular-nums;
 	padding: 11px 12px;
 }
 
@@ -1155,11 +1214,24 @@ body.sa-ui { font-size: 14px; }
 .sa-ui .widefat tfoot th {
 	color: var(--sa-subtle);
 	font-size: 13px;
-	font-weight: 500;
+	font-weight: 400;
 	line-height: 1.4;
 	background: var(--sa-chrome);
 	border-color: var(--sa-hairline);
 }
+
+/* A short divider between header cells, drawn as a background so column
+   widths never change. Not after the checkbox column. */
+.sa-ui .widefat thead :is(th, td):not(.check-column) + :is(th, td),
+.sa-ui .widefat tfoot :is(th, td):not(.check-column) + :is(th, td) {
+	background-image: linear-gradient(var(--sa-line), var(--sa-line));
+	background-repeat: no-repeat;
+	background-size: 1px 16px;
+	background-position: left center;
+}
+
+.rtl.sa-ui .widefat thead :is(th, td):not(.check-column) + :is(th, td),
+.rtl.sa-ui .widefat tfoot :is(th, td):not(.check-column) + :is(th, td) { background-position: right center; }
 
 .sa-ui .widefat thead th a,
 .sa-ui .widefat tfoot th a,
@@ -1217,7 +1289,8 @@ body.sa-ui table.wp-list-table > tbody > tr.alternate { background-color: transp
 	display: inline-block;
 	padding: 1px 8px;
 	border-radius: 999px;
-	background: var(--sa-tint);
+	background: transparent;
+	box-shadow: inset 0 0 0 1px var(--sa-border);
 	color: var(--sa-subtle);
 	font-size: 12px;
 	font-weight: 500;
@@ -1226,11 +1299,11 @@ body.sa-ui table.wp-list-table > tbody > tr.alternate { background-color: transp
 }
 
 /* Only the states that need attention get colour. Published stays plain. */
-.sa-ui tr.status-draft .post-state { background: var(--sa-tint); color: var(--sa-text); }
-.sa-ui tr.status-pending .post-state { background: var(--sa-warning-tint); color: var(--sa-warning); }
-.sa-ui tr.status-future .post-state { background: var(--sa-info-tint); color: var(--sa-info); }
-.sa-ui tr.status-private .post-state { background: var(--sa-purple-tint); color: var(--sa-purple); }
-.sa-ui tr.status-trash .post-state { background: var(--sa-danger-tint); color: var(--sa-danger); }
+.sa-ui tr.status-draft .post-state { color: var(--sa-text); }
+.sa-ui tr.status-pending .post-state { color: var(--sa-warning); box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--sa-warning) 45%, transparent); }
+.sa-ui tr.status-future .post-state { color: var(--sa-info); box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--sa-info) 45%, transparent); }
+.sa-ui tr.status-private .post-state { color: var(--sa-purple); box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--sa-purple) 45%, transparent); }
+.sa-ui tr.status-trash .post-state { color: var(--sa-danger); box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--sa-danger) 45%, transparent); }
 
 .sa-ui tr.status-draft a.row-title,
 .sa-ui tr.status-trash a.row-title { color: var(--sa-text); }
@@ -1262,6 +1335,16 @@ body.sa-ui table.wp-list-table > tbody > tr.alternate { background-color: transp
 
 .sa-ui p.search-box input[name="s"],
 .sa-ui p.search-box input[type="search"] { margin: 0; flex: 0 1 auto; }
+
+.sa-ui p.search-box input[type="search"] {
+	padding-inline-start: 32px;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none' stroke='%23868686' stroke-width='1.6' stroke-linecap='round'%3E%3Ccircle cx='7' cy='7' r='4.5'/%3E%3Cpath d='m10.5 10.5 3 3'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: left 10px center;
+	background-size: 16px 16px;
+}
+
+.rtl.sa-ui p.search-box input[type="search"] { background-position: right 10px center; }
 .sa-ui p.search-box .button { margin: 0; flex: none; }
 
 /* Status filters as a segmented control. The font-size trick hides the
@@ -1846,7 +1929,8 @@ body.sa-ui table.wp-list-table > tbody > tr.alternate { background-color: transp
 	margin: 0 4px 4px 0;
 	padding: 1px 8px;
 	border-radius: 999px;
-	background: var(--sa-tint);
+	background: transparent;
+	box-shadow: inset 0 0 0 1px var(--sa-border);
 	color: var(--sa-text);
 	font-size: 12px;
 	font-weight: 500;
@@ -1857,8 +1941,8 @@ body.sa-ui table.wp-list-table > tbody > tr.alternate { background-color: transp
 .sa-ui .wp-list-table td.column-categories > a:hover,
 .sa-ui .wp-list-table td.column-tags > a:hover,
 .sa-ui .wp-list-table td[class*="column-taxonomy-"] > a:hover {
-	background: var(--sa-accent-soft);
-	color: var(--sa-link);
+	background: var(--sa-tint);
+	color: var(--sa-strong);
 }
 
 .sa-ui .wp-list-table td.column-categories > span,

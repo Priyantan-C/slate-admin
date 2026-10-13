@@ -13,7 +13,7 @@ Most admin themes ship settings panels, icon packs and JavaScript frameworks. Th
 - **Clean surfaces.** One soft canvas for the page, sidebar and toolbar. White is kept for cards, tables and fields, so content stands out. Faint shadows on raised surfaces.
 - **Layered cards.** Dashboard widgets and plugin cards sit on a recessed layer with a white panel inside. Core settings screens are laid out as cards.
 - **Sidebar.** Compact rows, a soft accent tint on the open section, chevrons on sections with sub-items, even spacing in fly-out menus.
-- **Colour with meaning.** Tinted pills for Draft, Pending, Scheduled and Private. Dots for inactive or outdated plugins. Amber update counts. Published content and active plugins stay plain, so long lists stay calm.
+- **Colour with meaning.** Outlined pills for Draft, Pending, Scheduled and Private. Dots for inactive or outdated plugins. Amber update counts. Published content and active plugins stay plain, so long lists stay calm.
 - **List tables.** Status filters as a segmented control, categories and tags as soft chips.
 - **Media.** Library grid and list, attachment details, uploader and the "Add media" dialog, including inside the block editor.
 - **Login.** Restyled login, lost password and reset screens.
@@ -62,7 +62,8 @@ Bump the version in `slate-admin.php` (header and `SLATE_ADMIN_VERSION`) and the
 
 | Setting | What it does |
 | --- | --- |
-| Accent colour | Primary buttons, links, focus rings and the open sidebar section |
+| Accent colour | Primary buttons, checkboxes, focus rings and counts. Pick from preset swatches or any colour |
+| Sidebar highlight | Mark the current sidebar item in neutral grey (default) or the accent colour |
 | Default appearance | Light, Dark, or follow the device. Applies to the login page and to users who have not chosen their own |
 | Content width | Centred up to 1440px, or full width |
 
@@ -78,6 +79,14 @@ add_filter( 'slate_admin_defaults', function ( $d ) {
 ```
 
 Anything saved on the settings screen overrides these defaults for that site.
+
+To show your own brand colours as the preset swatches, use `slate_admin_accent_presets` (hex => label):
+
+```php
+add_filter( 'slate_admin_accent_presets', function () {
+    return array( '#0f766e' => 'Brand teal', '#111827' => 'Ink' );
+} );
+```
 
 ## What it deliberately does not do
 

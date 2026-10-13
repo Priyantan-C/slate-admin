@@ -2,7 +2,7 @@
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.6.2
+Stable tag: 1.7.0
 License: GPLv2 or later
 
 A lightweight, modern skin for the WordPress admin and login page. Styling only.
@@ -54,6 +54,15 @@ Anything saved on the settings screen overrides these defaults for that site.
 * Design tokens follow the neutral, card-based language of Cloudflare's open source Kumo design system (MIT licensed). No third-party logos, fonts or assets are included.
 
 == Changelog ==
+
+= 1.7.0 =
+* Changed: the accent is kept for actions. The current sidebar item is now a neutral grey pill with white text; set "Sidebar highlight" to "Accent colour" for the previous look.
+* Added: preset accent swatches next to the colour picker. Agencies can supply their own with the slate_admin_accent_presets filter.
+* Changed: links inside tables, boxes and descriptions read as text with a faint underline. Buttons, row actions and delete links keep their colours.
+* Changed: sidebar menu counts are grey rounded chips; only update counts stay amber. Plugin menu icons drawn as images or SVGs are greyed like the rest.
+* Changed: table headers are regular weight with short dividers between columns, and numbers in tables line up.
+* Changed: post status pills and category and tag chips are outlined instead of filled.
+* Changed: buttons are flat, and list table search fields have a search icon.
 
 = 1.6.2 =
 * Fixed: a new release could take up to a day to show on the Plugins and Updates screens. It now shows within six hours, and straight away after "Check again".

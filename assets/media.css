@@ -687,8 +687,8 @@
 .sa .media-modal .media-menu .media-menu-item.active,
 .sa .media-modal .media-menu .active,
 .sa .media-modal .media-menu .active:hover {
-	background: var(--sa-nav-active);
-	color: var(--sa-link);
+	background: var(--sa-nav-current-bg);
+	color: var(--sa-nav-current);
 	font-weight: 600;
 }
 

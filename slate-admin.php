@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Slate Admin
  * Description:       A lightweight, modern skin for the WordPress admin and login page. Styling only: light neutral surfaces, hairline cards, one accent colour, optional dark mode. Nothing is loaded on the public site.
- * Version:           1.6.2
+ * Version:           1.7.0
  * Requires at least: 6.4
  * Requires PHP:      7.4
  * Author:            SynerByte Tech
@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'SLATE_ADMIN_VERSION', '1.6.2' );
+define( 'SLATE_ADMIN_VERSION', '1.7.0' );
 define( 'SLATE_ADMIN_FILE', __FILE__ );
 define( 'SLATE_ADMIN_OPTION', 'slate_admin' );
 define( 'SLATE_ADMIN_USER_META', 'slate_admin_scheme' );
@@ -40,8 +40,28 @@ function slate_admin_defaults() {
 		'accent' => '#2f5bea',
 		'scheme' => 'light', // light | dark | auto.
 		'width'  => 'centered', // centered | full.
+		'nav'    => 'neutral', // neutral | accent: the current sidebar item.
 	);
 	return apply_filters( 'slate_admin_defaults', $defaults );
+}
+
+/**
+ * Ready-made accents shown as swatches next to the colour picker. Agencies
+ * can swap in their own with the slate_admin_accent_presets filter.
+ */
+function slate_admin_accent_presets() {
+	$presets = array(
+		'#2f5bea' => __( 'Slate blue', 'slate-admin' ),
+		'#0a6cff' => __( 'Bright blue', 'slate-admin' ),
+		'#4f46e5' => __( 'Indigo', 'slate-admin' ),
+		'#7c3aed' => __( 'Violet', 'slate-admin' ),
+		'#0f766e' => __( 'Teal', 'slate-admin' ),
+		'#15803d' => __( 'Green', 'slate-admin' ),
+		'#ea580c' => __( 'Orange', 'slate-admin' ),
+		'#e11d48' => __( 'Rose', 'slate-admin' ),
+		'#3f3f46' => __( 'Graphite', 'slate-admin' ),
+	);
+	return apply_filters( 'slate_admin_accent_presets', $presets );
 }
 
 function slate_admin_options() {
@@ -71,6 +91,9 @@ function slate_admin_sanitize( $in ) {
 
 	$width        = isset( $in['width'] ) ? $in['width'] : '';
 	$out['width'] = in_array( $width, array( 'centered', 'full' ), true ) ? $width : 'centered';
+
+	$nav        = isset( $in['nav'] ) ? $in['nav'] : '';
+	$out['nav'] = in_array( $nav, array( 'neutral', 'accent' ), true ) ? $nav : 'neutral';
 
 	return $out;
 }
@@ -291,6 +314,7 @@ add_filter(
 		$scheme   = $editor ? 'light' : slate_admin_scheme();
 		$classes .= ' sa sa-scheme-' . $scheme . ( $editor ? ' sa-editor' : ' sa-ui' );
 		$classes .= 'full' === slate_admin_opt( 'width' ) ? ' sa-w-full' : ' sa-w-centered';
+		$classes .= 'accent' === slate_admin_opt( 'nav' ) ? ' sa-nav-accent' : '';
 		return $classes;
 	}
 );
@@ -431,8 +455,46 @@ function slate_admin_settings_page() {
 				<tr>
 					<th scope="row"><label for="sa-accent"><?php esc_html_e( 'Accent colour', 'slate-admin' ); ?></label></th>
 					<td>
-						<input type="color" id="sa-accent" name="<?php echo esc_attr( $name ); ?>[accent]" value="<?php echo esc_attr( $o['accent'] ); ?>">
-						<p class="description"><?php esc_html_e( 'Used for primary buttons, links, focus rings and the active menu marker.', 'slate-admin' ); ?></p>
+						<div class="sa-accent-field">
+							<input type="color" id="sa-accent" name="<?php echo esc_attr( $name ); ?>[accent]" value="<?php echo esc_attr( $o['accent'] ); ?>">
+							<div class="sa-swatches" role="group" aria-label="<?php esc_attr_e( 'Preset accents', 'slate-admin' ); ?>">
+								<?php foreach ( slate_admin_accent_presets() as $hex => $label ) : ?>
+									<?php $hex = sanitize_hex_color( $hex ); ?>
+									<?php if ( $hex ) : ?>
+										<button type="button" class="sa-swatch" data-color="<?php echo esc_attr( $hex ); ?>" style="--sa-swatch:<?php echo esc_attr( $hex ); ?>" title="<?php echo esc_attr( $label ); ?>" aria-label="<?php echo esc_attr( $label ); ?>" aria-pressed="<?php echo strtolower( $hex ) === strtolower( $o['accent'] ) ? 'true' : 'false'; ?>"></button>
+									<?php endif; ?>
+								<?php endforeach; ?>
+							</div>
+						</div>
+						<p class="description"><?php esc_html_e( 'Used for primary buttons, checkboxes, focus rings and update counts. Pick a preset or any colour.', 'slate-admin' ); ?></p>
+						<script>
+						( function () {
+							var input = document.getElementById( 'sa-accent' );
+							var swatches = document.querySelectorAll( '.sa-swatch' );
+							function sync() {
+								swatches.forEach( function ( b ) {
+									b.setAttribute( 'aria-pressed', b.dataset.color.toLowerCase() === input.value.toLowerCase() ? 'true' : 'false' );
+								} );
+							}
+							swatches.forEach( function ( b ) {
+								b.addEventListener( 'click', function () {
+									input.value = b.dataset.color;
+									sync();
+								} );
+							} );
+							input.addEventListener( 'input', sync );
+						} )();
+						</script>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="sa-nav"><?php esc_html_e( 'Sidebar highlight', 'slate-admin' ); ?></label></th>
+					<td>
+						<select id="sa-nav" name="<?php echo esc_attr( $name ); ?>[nav]">
+							<option value="neutral" <?php selected( $o['nav'], 'neutral' ); ?>><?php esc_html_e( 'Neutral grey', 'slate-admin' ); ?></option>
+							<option value="accent" <?php selected( $o['nav'], 'accent' ); ?>><?php esc_html_e( 'Accent colour', 'slate-admin' ); ?></option>
+						</select>
+						<p class="description"><?php esc_html_e( 'How the current item in the sidebar is marked. Neutral keeps the accent for buttons and actions.', 'slate-admin' ); ?></p>
 					</td>
 				</tr>
 				<tr>
