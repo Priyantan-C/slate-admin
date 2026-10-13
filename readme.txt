@@ -2,7 +2,7 @@
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.7.0
+Stable tag: 1.7.1
 License: GPLv2 or later
 
 A lightweight, modern skin for the WordPress admin and login page. Styling only.
@@ -54,6 +54,10 @@ Anything saved on the settings screen overrides these defaults for that site.
 * Design tokens follow the neutral, card-based language of Cloudflare's open source Kumo design system (MIT licensed). No third-party logos, fonts or assets are included.
 
 == Changelog ==
+
+= 1.7.1 =
+* Fixed: the command palette (Ctrl+K) search line was drawn as a boxed field with a focus ring. It is a plain search line again, and the palette now follows light and dark with a grey highlight for the selected command.
+* Added: Gravity Forms dashboard widget styling. One quiet table without italics or a header band, form names as links, counts right-aligned, unread counts in amber.
 
 = 1.7.0 =
 * Changed: the accent is kept for actions. The current sidebar item is now a neutral grey pill with white text; set "Sidebar highlight" to "Accent colour" for the previous look.

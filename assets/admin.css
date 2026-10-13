@@ -1825,6 +1825,62 @@ body.sa-ui table.wp-list-table > tbody > tr.alternate { background-color: transp
 .sa-ui .privacy-settings-accordion-heading { border-color: var(--sa-hairline); }
 .sa-ui .health-check-accordion-panel { background: var(--sa-base); }
 
+/* Command palette (Ctrl+K). Core draws a borderless search line inside the
+   dialog; the generic field style above must not box it in. */
+.sa-ui .components-modal__frame.commands-command-menu {
+	background: var(--sa-base);
+	color: var(--sa-text);
+	border-radius: 12px;
+	box-shadow: var(--sa-pop);
+}
+
+.sa-ui .commands-command-menu__header { gap: 10px; padding: 0 18px; }
+.sa-ui .commands-command-menu__header svg { fill: var(--sa-subtle); }
+.sa-ui .commands-command-menu__header .components-button { border-color: var(--sa-border); color: var(--sa-text); }
+
+.sa-ui .commands-command-menu__container input[cmdk-input],
+.sa-ui .commands-command-menu__container input[cmdk-input]:focus {
+	min-height: 0;
+	height: 56px;
+	padding: 0 4px;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+	box-shadow: none;
+	outline: none;
+	color: var(--sa-strong);
+	font-size: 15px;
+}
+
+.sa-ui .commands-command-menu__container input[cmdk-input]::placeholder { color: var(--sa-faint); }
+
+.sa-ui .commands-command-menu__container [cmdk-root] > [cmdk-list]:has([cmdk-group-items]:not(:empty)),
+.sa-ui .commands-command-menu__container [cmdk-root] > [cmdk-list]:has([cmdk-empty]) { border-top-color: var(--sa-hairline); }
+
+.sa-ui .commands-command-menu__container [cmdk-root] > [cmdk-list] [cmdk-group-heading] {
+	color: var(--sa-subtle);
+	font-weight: 500;
+	letter-spacing: 0.02em;
+}
+
+.sa-ui .commands-command-menu__container [cmdk-item],
+.sa-ui .commands-command-menu__container [cmdk-empty] { color: var(--sa-text); font-size: 14px; }
+.sa-ui .commands-command-menu__container [cmdk-item] svg { fill: var(--sa-subtle); }
+.sa-ui .commands-command-menu__container [cmdk-item] > div { border-radius: var(--sa-radius); min-height: 36px; }
+
+.sa-ui .commands-command-menu__container [cmdk-item][aria-selected="true"] > div,
+.sa-ui .commands-command-menu__container [cmdk-item]:active > div {
+	background: var(--sa-tint);
+	color: var(--sa-strong);
+}
+
+.sa-ui .commands-command-menu__container [cmdk-item][aria-selected="true"] > div svg,
+.sa-ui .commands-command-menu__container [cmdk-item]:active > div svg { fill: var(--sa-strong); }
+
+.sa-ui .commands-command-menu__item-category,
+.sa-ui [aria-selected="true"] .commands-command-menu__item-category { color: var(--sa-subtle); }
+.sa-ui .commands-command-menu__item mark { color: var(--sa-strong); }
+
 /* Pointers and modals */
 .sa-ui .wp-pointer-content {
 	background: var(--sa-base);
@@ -1989,6 +2045,47 @@ body.sa-ui table.wp-list-table > tbody > tr.alternate { background-color: transp
 .sa-ui .row-actions span.trash a:hover,
 .sa-ui .row-actions span.spam a:hover,
 .sa-ui .submitdelete:hover { color: var(--sa-danger-solid); }
+
+/* Gravity Forms dashboard widget: one quiet table inside the card. The
+   plugin writes bold, italics and centring inline, so those need !important. */
+.sa-ui .widefat.gf_dashboard_view {
+	background: transparent;
+	box-shadow: none;
+	border-radius: 0;
+}
+
+.sa-ui .gf_dashboard_view thead td {
+	background-color: transparent;
+	border-bottom: 1px solid var(--sa-hairline);
+	font-weight: 400 !important;
+}
+
+.sa-ui .gf_dashboard_view thead i { font-style: normal; }
+
+.sa-ui .gf_dashboard_view :is(.gf_dashboard_entries_unread_header, .gf_dashboard_entries_total_header, .gf_dashboard_entries_unread, .gf_dashboard_entries_total) {
+	width: 1%;
+	white-space: nowrap;
+	text-align: right !important;
+}
+
+.sa-ui .gf_dashboard_view tbody td a { font-weight: 400 !important; }
+.sa-ui .gf_dashboard_view tbody td a.form_title_unread { font-weight: 600 !important; }
+
+/* Counts read as numbers, not links, until hovered. Unread entries are
+   waiting on someone, so they get the amber used for pending items. */
+.sa-ui .gf_dashboard_view td.gf_dashboard_entries_unread a,
+.sa-ui .gf_dashboard_view td.gf_dashboard_entries_total a {
+	color: var(--sa-subtle);
+	text-decoration: none;
+}
+
+.sa-ui .gf_dashboard_view td.gf_dashboard_entries_unread a.form_entries_unread {
+	color: var(--sa-warning);
+	font-weight: 600 !important;
+}
+
+.sa-ui .gf_dashboard_view td.gf_dashboard_entries_unread a:hover,
+.sa-ui .gf_dashboard_view td.gf_dashboard_entries_total a:hover { text-decoration: underline; }
 
 /* Dashboard: At a Glance icons */
 .sa-ui #dashboard_right_now li.post-count a::before { color: var(--sa-accent); }
