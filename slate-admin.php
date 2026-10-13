@@ -2,12 +2,13 @@
 /**
  * Plugin Name:       Slate Admin
  * Description:       A lightweight, modern skin for the WordPress admin and login page. Styling only: light neutral surfaces, hairline cards, one accent colour, optional dark mode. Nothing is loaded on the public site.
- * Version:           1.5.1
+ * Version:           1.6.0
  * Requires at least: 6.4
  * Requires PHP:      7.4
  * Author:            SynerByte Tech
  * License:           GPL-2.0-or-later
  * Text Domain:       slate-admin
+ * Update URI:        https://github.com/Priyantan-C/slate-admin
  *
  * Styling only by design. Toolbar clean-up, footer text, login logo and menu
  * width are left to core or to a utility plugin such as Admin and Site
@@ -25,7 +26,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'SLATE_ADMIN_VERSION', '1.5.1' );
+define( 'SLATE_ADMIN_VERSION', '1.6.0' );
+define( 'SLATE_ADMIN_FILE', __FILE__ );
 define( 'SLATE_ADMIN_OPTION', 'slate_admin' );
 define( 'SLATE_ADMIN_USER_META', 'slate_admin_scheme' );
 
@@ -38,6 +40,7 @@ function slate_admin_defaults() {
 		'accent' => '#2f5bea',
 		'scheme' => 'light', // light | dark | auto.
 		'width'  => 'centered', // centered | full.
+		'auto_update' => 1,
 	);
 	return apply_filters( 'slate_admin_defaults', $defaults );
 }
@@ -69,6 +72,8 @@ function slate_admin_sanitize( $in ) {
 
 	$width        = isset( $in['width'] ) ? $in['width'] : '';
 	$out['width'] = in_array( $width, array( 'centered', 'full' ), true ) ? $width : 'centered';
+
+	$out['auto_update'] = empty( $in['auto_update'] ) ? 0 : 1;
 
 	return $out;
 }
@@ -454,9 +459,19 @@ function slate_admin_settings_page() {
 						<p class="description"><?php esc_html_e( 'Only matters on very wide monitors, where full-width tables and forms become hard to scan.', 'slate-admin' ); ?></p>
 					</td>
 				</tr>
+				<tr>
+					<th scope="row"><?php esc_html_e( 'Updates', 'slate-admin' ); ?></th>
+					<td>
+						<input type="hidden" name="<?php echo esc_attr( $name ); ?>[auto_update]" value="0">
+						<label><input type="checkbox" name="<?php echo esc_attr( $name ); ?>[auto_update]" value="1" <?php checked( $o['auto_update'], 1 ); ?>> <?php esc_html_e( 'Install new versions automatically', 'slate-admin' ); ?></label>
+						<p class="description"><?php esc_html_e( 'New versions come from the GitHub releases of this plugin. When this is off, updates still appear on the Plugins screen for you to install.', 'slate-admin' ); ?></p>
+					</td>
+				</tr>
 			</table>
 			<?php submit_button(); ?>
 		</form>
 	</div>
 	<?php
 }
+
+require_once __DIR__ . '/includes/updater.php';

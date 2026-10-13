@@ -2,7 +2,7 @@
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.5.1
+Stable tag: 1.6.0
 License: GPLv2 or later
 
 A lightweight, modern skin for the WordPress admin and login page. Styling only.
@@ -54,6 +54,12 @@ Anything saved on the settings screen overrides these defaults for that site.
 * Design tokens follow the neutral, card-based language of Cloudflare's open source Kumo design system (MIT licensed). No third-party logos, fonts or assets are included.
 
 == Changelog ==
+
+= 1.6.0 =
+* Added: updates from this plugin's GitHub releases. New versions show on the Plugins and Updates screens with their changelog, like a plugin from wordpress.org.
+* Added: "Install new versions automatically" setting, on by default.
+* Added: Update URI header, so WordPress never mistakes this plugin for one of the same name on wordpress.org.
+* Uninstall now also clears the cached release information.
 
 = 1.5.1 =
 * Fixed: Add Plugins cards were squeezed into four narrow columns on very wide monitors when content is centred. The grid now follows the space the cards actually have.

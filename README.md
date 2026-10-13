@@ -38,11 +38,25 @@ Most admin themes ship settings panels, icon packs and JavaScript frameworks. Th
 
 ## Install
 
-1. Download `slate-admin.zip` from the latest [release](../../releases).
+1. Download [`slate-admin.zip`](../../releases/latest/download/slate-admin.zip) from the latest release.
 2. In WordPress, go to **Plugins > Add Plugin > Upload Plugin**, choose the zip, then activate.
 3. Open **Settings > Slate Admin**.
 
 Use the zip attached to a release. The "Source code" zip that GitHub generates unpacks to a versioned folder name, which WordPress would treat as a different plugin on each update.
+
+## Updates
+
+Once installed, the plugin updates itself from this repository's releases, like a plugin from wordpress.org:
+
+- WordPress checks for a new release every few hours and shows it on the **Plugins** and **Updates** screens, with the changelog under "View details".
+- New versions install automatically by default. Turn that off under **Settings > Slate Admin > Updates** to review and install them yourself.
+- No token or account is needed. The plugin reads the public GitHub API, and the plugin's `Update URI` header stops WordPress from ever confusing it with a different plugin of the same name on wordpress.org.
+
+To turn update checks off entirely on a site, add `define( 'SLATE_ADMIN_DISABLE_UPDATES', true );` to `wp-config.php`. To update from a fork, use the `slate_admin_update_repo` filter (`'owner/repo'`).
+
+### Publishing a release
+
+Bump the version in `slate-admin.php` (header and `SLATE_ADMIN_VERSION`) and the `Stable tag` in `readme.txt`, add a changelog entry, and push to `main`. The release workflow checks the three versions agree, builds `slate-admin.zip` with minified CSS, tags the commit and publishes the release. Sites pick it up on their next check.
 
 ## Settings
 
@@ -51,6 +65,7 @@ Use the zip attached to a release. The "Source code" zip that GitHub generates u
 | Accent colour | Primary buttons, links, focus rings and the open sidebar section |
 | Default appearance | Light, Dark, or follow the device. Applies to the login page and to users who have not chosen their own |
 | Content width | Centred up to 1440px, or full width |
+| Updates | Install new versions automatically (on by default) |
 
 ## Agency defaults
 
@@ -87,7 +102,8 @@ Slate Admin only changes appearance. These are left to WordPress or to a utility
 
 ```
 slate-admin.php     Plugin bootstrap, settings screen, accent and contrast logic
-uninstall.php       Removes the stored option and per-user appearance choice
+includes/updater.php  Update checks against this repository's GitHub releases
+uninstall.php       Removes the stored option, per-user appearance choice and update cache
 assets/admin.css    Admin skin
 assets/media.css    Media skin, loaded only on media screens
 assets/login.css    Login screens
@@ -101,5 +117,7 @@ readme.txt          WordPress-format readme and changelog
 The design tokens follow the neutral, card-based language of Cloudflare's open source [Kumo](https://github.com/cloudflare/kumo) design system (MIT licensed). No third-party logos, fonts or assets are included.
 
 ## Licence
+
+See [LICENSE](LICENSE).
 
 GPL-2.0-or-later, the same as WordPress.
