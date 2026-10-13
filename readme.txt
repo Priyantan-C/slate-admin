@@ -2,7 +2,7 @@
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.6.0
+Stable tag: 1.6.1
 License: GPLv2 or later
 
 A lightweight, modern skin for the WordPress admin and login page. Styling only.
@@ -54,6 +54,11 @@ Anything saved on the settings screen overrides these defaults for that site.
 * Design tokens follow the neutral, card-based language of Cloudflare's open source Kumo design system (MIT licensed). No third-party logos, fonts or assets are included.
 
 == Changelog ==
+
+= 1.6.1 =
+* Fixed: the plugin and theme zip upload area was unstyled. It is now a dashed drop card with a styled file button, in light and dark.
+* Fixed: toolbar dropdowns such as Visit Site now have inset rows with a hover background.
+* Fixed: in dark mode, inactive Add Plugins tabs showed a white underline, and plugin card descriptions were too faint.
 
 = 1.6.0 =
 * Added: updates from this plugin's GitHub releases. New versions show on the Plugins and Updates screens with their changelog, like a plugin from wordpress.org.

@@ -161,21 +161,44 @@
 	border-radius: 0 0 10px 10px;
 }
 
-.sa #wpadminbar .quicklinks .menupop ul li a:hover,
-.sa #wpadminbar .quicklinks .menupop ul li a:focus,
 .sa #wpadminbar .quicklinks .menupop ul li a:hover strong,
 .sa #wpadminbar .quicklinks .menupop ul li a:focus strong,
-.sa #wpadminbar .quicklinks .ab-sub-wrapper .menupop.hover > a,
-.sa #wpadminbar .quicklinks .menupop.hover ul li a:hover,
-.sa #wpadminbar .quicklinks .menupop.hover ul li a:focus,
 .sa #wpadminbar li:hover #wp-admin-bar-user-info .display-name,
-.sa #wpadminbar #wp-admin-bar-user-info a:hover .display-name {
-	color: var(--sa-strong);
-	background: transparent;
+.sa #wpadminbar #wp-admin-bar-user-info a:hover .display-name { color: var(--sa-strong); }
+
+/* Dropdown items: inset rows with a rounded hover, like the sidebar fly-outs. */
+.sa #wpadminbar .menupop .ab-sub-wrapper > .ab-submenu { padding: 4px; }
+
+.sa #wpadminbar .quicklinks .menupop ul.ab-submenu > li > .ab-item,
+.sa #wpadminbar .quicklinks .menupop ul.ab-submenu > li > a.ab-item {
+	height: auto;
+	min-height: 30px;
+	padding: 0 10px;
+	border-radius: 6px;
+	line-height: 30px;
+	font-size: 13px;
+	white-space: nowrap;
 }
 
-.sa #wpadminbar .quicklinks .menupop ul li a:hover,
-.sa #wpadminbar .quicklinks .menupop ul li a:focus { background: var(--sa-tint); }
+.sa #wpadminbar .quicklinks .menupop ul.ab-submenu > li + li { margin-top: 1px; }
+
+.sa #wpadminbar .quicklinks .menupop ul.ab-submenu > li > a.ab-item:hover,
+.sa #wpadminbar .quicklinks .menupop ul.ab-submenu > li > a.ab-item:focus,
+.sa #wpadminbar .quicklinks .menupop.hover ul.ab-submenu > li > a.ab-item:hover,
+.sa #wpadminbar .quicklinks .menupop.hover ul.ab-submenu > li > a.ab-item:focus,
+.sa #wpadminbar .quicklinks .ab-sub-wrapper .menupop.hover > a.ab-item {
+	background: var(--sa-tint);
+	color: var(--sa-strong);
+	box-shadow: none;
+}
+
+/* The account card keeps core's avatar layout. */
+.sa #wpadminbar #wp-admin-bar-user-actions > #wp-admin-bar-user-info > .ab-item {
+	height: auto;
+	padding: 4px 10px;
+	line-height: 18px;
+}
+.sa #wpadminbar #wp-admin-bar-user-actions > #wp-admin-bar-user-info > .ab-item:hover { background: transparent; }
 
 .sa #wpadminbar #wp-admin-bar-user-info .display-name { color: var(--sa-strong); }
 .sa #wpadminbar #wp-admin-bar-user-info .username { color: var(--sa-subtle); }
@@ -1483,11 +1506,19 @@ body.sa-ui table.wp-list-table > tbody > tr.alternate { background-color: transp
 .sa-ui .plugin-card .name,
 .sa-ui .plugin-card h3 { color: var(--sa-strong); }
 .sa-ui .plugin-card .desc,
+.sa-ui .plugin-card .desc > p,
+.sa-ui .plugin-card .column-description > p { color: var(--sa-text); }
+.sa-ui .plugin-card .authors { color: var(--sa-subtle); }
+.sa-ui .plugin-card .desc,
 .sa-ui .plugin-card .column-compatibility,
 .sa-ui .plugin-card .column-updated { color: var(--sa-subtle); }
 
 .sa-ui .wp-filter { padding: 0 14px; margin: 16px 0 20px; }
-.sa-ui .wp-filter .filter-links li > a { color: var(--sa-subtle); font-weight: 500; }
+.sa-ui .wp-filter .filter-links li > a {
+	color: var(--sa-subtle);
+	font-weight: 500;
+	border-bottom-color: transparent;
+}
 .sa-ui .wp-filter .filter-links li > a:hover { color: var(--sa-strong); }
 .sa-ui .wp-filter .filter-links .current {
 	color: var(--sa-strong);
@@ -1496,6 +1527,59 @@ body.sa-ui table.wp-list-table > tbody > tr.alternate { background-color: transp
 }
 .sa-ui .wp-filter .drawer-toggle::before,
 .sa-ui .wp-filter .filter-count .count { color: var(--sa-subtle); }
+
+/* Upload a plugin or theme zip */
+.sa-ui .upload-plugin,
+.sa-ui .upload-theme { padding: 28px 0 36px; }
+
+.sa-ui .upload-plugin .install-help,
+.sa-ui .upload-theme .install-help {
+	color: var(--sa-subtle);
+	font-size: 15px;
+}
+
+.sa-ui .upload-plugin .wp-upload-form,
+.sa-ui .upload-theme .wp-upload-form {
+	align-items: center;
+	gap: 16px;
+	margin: 20px auto 0;
+	padding: 28px 24px;
+	width: 100%;
+	max-width: 560px;
+	box-sizing: border-box;
+	background: var(--sa-chrome);
+	border: 1.5px dashed var(--sa-border);
+	border-radius: 12px;
+	box-shadow: none;
+}
+
+.sa-ui .upload-plugin .wp-upload-form input[type="file"],
+.sa-ui .upload-theme .wp-upload-form input[type="file"] {
+	flex: 1 1 auto;
+	min-width: 0;
+	padding: 0;
+	color: var(--sa-subtle);
+	font-family: var(--sa-font);
+	font-size: 14px;
+}
+
+.sa-ui .wp-upload-form input[type="file"]::file-selector-button {
+	min-height: 36px;
+	margin-inline-end: 12px;
+	padding: 0 14px;
+	color: var(--sa-strong);
+	background: var(--sa-control);
+	border: 1px solid var(--sa-border);
+	border-radius: var(--sa-radius);
+	box-shadow: var(--sa-shadow-sm);
+	font: 500 14px/34px var(--sa-font);
+	cursor: pointer;
+}
+
+.sa-ui .wp-upload-form input[type="file"]::file-selector-button:hover { background: var(--sa-tint); }
+
+.sa-ui .upload-plugin .wp-upload-form .button,
+.sa-ui .upload-theme .wp-upload-form .button { flex: none; margin: 0; }
 
 /* Themes */
 .sa-ui .theme-browser .theme {
